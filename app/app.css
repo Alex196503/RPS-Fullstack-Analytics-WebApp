@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    "Barlow Semi Condensed", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --color-gold-500: hsl(39, 89%, 49%);
+  --color-gold-600: hsl(28, 76%, 44%);
+  --color-blue-500: hsl(230, 89%, 62%);
+  --color-blue-700: hsl(229, 64%, 46%);
+  --color-red-600: hsl(349, 71%, 52%);
+  --color-red-800: hsl(347, 75%, 35%);
+  --color-purple-600: hsl(261, 73%, 60%);
+  --color-purple-700: hsl(261, 51%, 44%);
+  --color-lightblue-400: hsl(189, 59%, 53%);
+  --color-lightblue-500: hsl(194, 58%, 42%);
+
+  /* Neutral Colors */
+  --color-navy-900: hsl(229, 25%, 31%);
+  --color-gray-600: hsl(246, 11%, 37%);
+
+  /* Background Gradients */
+  --background-image-main-bg: radial-gradient(
+    circle,
+    hsl(214, 47%, 23%),
+    hsl(237, 48%, 15%)
+  );
+}
+html,
+body {
+  background-image: var(--background-image-main-bg);
+  font-size: 16px;
+  min-height: 100vh;
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+.badge-inner {
+  @apply relative w-[110px] h-[110px] rounded-[50%] flex items-center justify-center bg-[var(--color-white)] shadow-[inset_0_6px_0_0_rgba(0,0,0,0.15)];
+}
+.svg-class {
+  @apply cursor-pointer object-contain;
+}
+.paragraph-choice {
+  @apply text-white text-sm md:text-2xl uppercase font-bold tracking-widest whitespace-nowrap;
+}
