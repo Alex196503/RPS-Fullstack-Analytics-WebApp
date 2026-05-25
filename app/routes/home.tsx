@@ -1,4 +1,5 @@
-import type { Route } from "./+types/home"
+import { Navbar } from "~/components/MainFileComponents/Navbar"
+import type { Route } from "../+types/root"
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Game app" },
@@ -7,5 +8,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return <h2> Hello </h2>
+  return (
+    <>
+      <Navbar />
+    </>
+  )
 }

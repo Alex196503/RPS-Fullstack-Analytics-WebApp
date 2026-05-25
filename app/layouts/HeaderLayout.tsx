@@ -3,6 +3,7 @@ import { ScoreContainer } from "~/components/PlayFileComponents/StatBox"
 import { Outlet, useLocation } from "react-router"
 import { gameFunctions } from "~/config/gameConfig"
 import { useEffect, useState } from "react"
+import { Navbar } from "~/components/MainFileComponents/Navbar"
 // Pass 'score' from HeaderLayout down to the final layout child. React Router's useOutletContext() only reads from the closest parent, so we must merge Header props with Footer props here to receive all 4 in GameApp.
 export default function HeaderLayout() {
   let url = useLocation()
@@ -28,9 +29,12 @@ export default function HeaderLayout() {
   }, [score])
   return (
     <>
-      <header className="w-full flex justify-between items-center max-w-[350px] sm:max-w-[400px] md:max-w-[700px] border-3 border-gray-600 px-3 py-1 mt-10 rounded-2xl mx-auto">
-        <TitleComponents components={dynamicGameFunctions} />
-        <ScoreContainer title="Score" value={score} />
+      <header className="w-full flex flex-col">
+        <Navbar />
+        <div className="w-full flex justify-between items-center max-w-[350px] sm:max-w-[400px] md:max-w-[700px] border-3 border-gray-600 px-3 py-1 mt-10 rounded-2xl mx-auto">
+          <TitleComponents components={dynamicGameFunctions} />
+          <ScoreContainer title="Score" value={score} />
+        </div>
       </header>
       <Outlet context={{ score, setScore }} />
     </>
