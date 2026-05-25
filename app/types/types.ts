@@ -70,3 +70,13 @@ export interface ContextResetProps {
   setHouseChoice: React.Dispatch<React.SetStateAction<number | null>>
   setMessage: React.Dispatch<React.SetStateAction<string>>
 }
+
+export type NavLinks = {
+  name: string
+  route: string
+}
+
+export type ToggleThemeProps = {
+  isDark: boolean
+  setDark: React.Dispatch<React.SetStateAction<boolean>>
+}

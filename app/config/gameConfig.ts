@@ -1,6 +1,6 @@
-// Global game configuration constants (move names, variations, and game data)
+// Global game configuration constants (move names, variations, and game data, links)
 // Used across layouts and pages to maintain a single source of truth.
-import { type BadgeData } from "../types/types"
+import { type BadgeData, type NavLinks } from "../types/types"
 export let gameFunctions: string[] = [
   "Paper",
   "Scissors",
@@ -8,7 +8,6 @@ export let gameFunctions: string[] = [
   "Lizard",
   "Spock"
 ]
-
 export let GameBadges: BadgeData[] = [
   {
     container: {
@@ -95,4 +94,12 @@ export const gameRules = [
   { win: "scissors", lose: ["paper", "lizard"] },
   { win: "lizard", lose: ["paper", "spock"] },
   { win: "spock", lose: ["scissors", "rock"] }
+]
+
+//Links used for our navbar
+export const globalLinks: NavLinks[] = [
+  { name: "Classic play", route: "/play/classic" },
+  { name: "Advanced play", route: "/play/advanced" },
+  { name: "Profile", route: "/profile" },
+  { name: "History", route: "/history" }
 ]

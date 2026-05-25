@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react"
 import { gameRules } from "~/config/gameConfig"
 import { resetContext } from "./context"
-
+import { ToggleThemeContext } from "./context"
 // Custom hook to close the menu when the window is resized above a certain width e.g. 750px
 export default function useMenuResponsiveClose(
   isMenuOpen: boolean,
@@ -43,6 +43,7 @@ export function useRandomDelayedIndex(
     }
   }, [choice])
 }
+
 //Custom hook that monitors the player's and house's choices, evaluates the game rules, and updates the game outcome message state. Employs a guard clause to wait until both sides have made a selection. */
 export function useResultGame(
   HouseChoiceMessage: string | null,
@@ -93,4 +94,14 @@ export function useGameScoreSync(
       )
     }
   }, [message])
+}
+
+export function useThemeContext() {
+  const context = useContext(ToggleThemeContext)
+  if (!context) {
+    throw new Error(
+      `This context does not exist was not used properly!`
+    )
+  }
+  return context
 }
