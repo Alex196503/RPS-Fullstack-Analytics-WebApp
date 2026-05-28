@@ -60,3 +60,6 @@ html.light body {
 .logo-link {
   @apply text-2xl cursor-pointer font-bold md:text-gray-600 uppercase tracking-wider;
 }
+.form-container {
+  @apply mb-2 flex flex-col gap-y-2 py-1;
+}

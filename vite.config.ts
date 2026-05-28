@@ -8,6 +8,15 @@ export default defineConfig({
     tsconfigPaths: true
   },
   server: {
-    port: 3000
+    port: 3000,
+    proxy: {
+      // Proxy API requests to the Express server
+      "/api": {
+        target: "http://127.0.0.1:5000",
+        changeOrigin: true,
+        secure: false,
+        ws: true
+      }
+    }
   }
 })

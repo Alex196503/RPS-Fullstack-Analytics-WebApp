@@ -1,0 +1,148 @@
+import express, {
+  type NextFunction,
+  type Request,
+  type Response
+} from "express"
+import { v4 as uuidv4 } from "uuid"
+import jsonwebtoken from "jsonwebtoken"
+import {
+  FileValidationSchema,
+  LoginSchema,
+  RegisterSchema
+} from "../utils/zod-validation"
+import multer from "multer"
+import bcrypt from "bcrypt"
+import type { User } from "~/types/types"
+const upload = multer({ dest: "uploads/" })
+let users: User[] = []
+export const router = express.Router()
+
+router.get("/", (req: Request, res: Response) => {
+  res.send("Test route for our API!")
+})
+
+//The register route that performs and validates our register based on our zod validation schema
+router.post(
+  "/register",
+  upload.single("avatar"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ message: "Profile picture is required" })
+      }
+      const result = RegisterSchema.safeParse(req.body)
+      const fileResult = FileValidationSchema.safeParse(req.file)
+
+      if (!result.success) {
+        return res.status(400).json({
+          success: false,
+          errors: result.error.format()
+        })
+      }
+
+      if (!fileResult.success) {
+        return res.status(400).json({
+          success: false,
+          errors: fileResult.error.format()
+        })
+      }
+      const userData = result.data
+      const fileData = fileResult.data
+      let { email, password, username } = userData
+      let userAlreadyExists = users.find(
+        (user) => user.email === email
+      )
+      if (userAlreadyExists) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "An account with this email address already exists."
+        })
+      }
+      const userId = uuidv4()
+      let salt = await bcrypt.genSalt(10)
+      let bcryptedPassword = await bcrypt.hash(password, salt)
+      users.push({
+        email,
+        password: bcryptedPassword,
+        avatar: fileData.filename,
+        username,
+        id: userId
+      })
+      return res.status(201).json({
+        message: "User registered successfully!",
+        success: true,
+        user: {
+          username: userData.username,
+          email: userData.email,
+          avatar: fileData.filename
+        }
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
+)
+
+router.post(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const resultLogin = LoginSchema.safeParse(req.body)
+      if (!resultLogin.success) {
+        return res.status(400).json({
+          success: false,
+          errors: resultLogin.error.format()
+        })
+      }
+      const userLoginData = resultLogin.data
+      const { email, password } = userLoginData
+      let foundUser = users.find((user) => user.email === email)
+      if (!foundUser) {
+        return res
+          .status(404)
+          .json({ message: "User not found!", success: false })
+      }
+      if (foundUser.password) {
+        let result = await bcrypt.compare(
+          password,
+          foundUser.password
+        )
+        if (!result) {
+          return res.status(401).json({
+            message: "Invalid email or password!",
+            success: false
+          })
+        }
+        let secret_key = process.env.JWT_SECRET
+        if (!secret_key) {
+          return next(
+            new Error(
+              "JWT secret key is not defined in environment variables"
+            )
+          )
+        }
+        const jwt_data = jsonwebtoken.sign(
+          { user_id: foundUser.id },
+          secret_key,
+          { expiresIn: "1h" }
+        )
+        return res.status(200).json({
+          message: "Login succesful",
+          success: true,
+          token: jwt_data,
+          user: {
+            id: foundUser.id,
+            username: foundUser.username,
+            email: foundUser.email,
+            avatar: foundUser.avatar
+          }
+        })
+      }
+    } catch (err) {
+      next(err)
+    }
+  }
+)

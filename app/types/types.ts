@@ -80,3 +80,23 @@ export type ToggleThemeProps = {
   isDark: boolean
   setDark: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+export type ProfileBadgeProps = {
+  name: string
+  bgColor: string
+  textColor: string
+  borderColor: string
+}
+
+export type FormData = {
+  username: string | null
+  email: string | null
+  password: string | null
+  confirmPassword: string | null
+  avatar: string
+}
+
+export type User = Pick<
+  FormData,
+  "email" | "password" | "avatar" | "username"
+> & { id: string }
