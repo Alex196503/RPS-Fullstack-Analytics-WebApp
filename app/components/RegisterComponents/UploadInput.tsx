@@ -1,0 +1,27 @@
+export const UploadInput = ({
+  label,
+  name
+}: {
+  label: string
+  name: string
+}) => {
+  return (
+    <>
+      <div className="form-container">
+        <label
+          className="block text-xs font-bold uppercase tracking-wide text-gray-400 mb-1"
+          htmlFor="avatar"
+        >
+          {label}
+        </label>
+        <input
+          type="file"
+          name={name}
+          id={name}
+          accept="image/*"
+          className="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-md focus:outline-none focus:border-blue-500 text-white transition-colors"
+        />
+      </div>
+    </>
+  )
+}

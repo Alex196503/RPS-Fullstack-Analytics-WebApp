@@ -7,6 +7,8 @@ import {
 
 export default [
   index("./routes/home.tsx"),
+  route("/register", "./register/index.tsx"),
+  route("/login", "./login/index.tsx"),
   layout("./layouts/HeaderLayout.tsx", [
     layout("./layouts/FooterLayout.tsx", [
       route("play/classic", "./custom-game/index.tsx"),
