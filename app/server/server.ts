@@ -4,9 +4,13 @@ import express, {
   type Response
 } from "express"
 import "dotenv/config" // Load environment variables from .env file
+import mongoose from "mongoose"
 const app = express()
 const port = process.env.PORT || 5000
 import { router } from "../express-router/router"
+await mongoose
+  .connect(process.env.MONGODB_URI || "")
+  .catch((err) => console.log("Failed to connect to MongoDB:", err))
 import cors from "cors"
 app.use(cors())
 app.use(express.json())
