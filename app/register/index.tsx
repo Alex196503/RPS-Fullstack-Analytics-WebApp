@@ -1,12 +1,21 @@
 import { Link, redirect } from "react-router"
 import { Form } from "react-router"
-import { fetchAuthenticationApi } from "~/utils/boilerplate-functions"
+import {
+  fetchAuthenticationApi,
+  redirectIfAuthenticated
+} from "~/utils/boilerplate-functions"
 import type { Route } from "./+types"
 import { EmailInput } from "~/components/RegisterComponents/EmailInput"
 import { validateFrontendRegistration } from "~/utils/boilerplate-functions"
 import { TextInput } from "~/components/RegisterComponents/TextInput"
 import { UploadInput } from "~/components/RegisterComponents/UploadInput"
 import { PasswordInput } from "~/components/RegisterComponents/PasswordInput"
+
+export async function loader({ request }: Route.ActionArgs) {
+  //Calling the function which checks if the users are logged in or not
+  return redirectIfAuthenticated(request)
+}
+
 export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData()
   const username = formData.get("username") as string
@@ -55,12 +64,60 @@ export default function RegisterPage({
           </p>
         </div>
         {actionData?.errors && (
-          <div className="mb-6 px-4 py-5 bg-red-700 text-red-100 text-center rounded-lg border border-red-500 shadow-md">
-            {Object.values(actionData?.errors).map((error, index) => (
-              <p className="text-sm text-red-400 mt-1" key={index}>
-                {index + 1}. {error as string}
+          <div className="mb-6 px-4 py-5 bg-red-700 flex flex-col gap-2 text-red-100 text-left rounded-lg border border-red-500 shadow-md">
+            {(actionData.errors.email?._errors?.[0] ||
+              typeof actionData.errors.email === "string") && (
+              <p className="text-sm font-semibold text-white">
+                Email:{" "}
+                {actionData.errors.email?._errors?.[0] ||
+                  actionData.errors.email}
               </p>
-            ))}
+            )}
+
+            {(actionData.errors.username?._errors?.[0] ||
+              typeof actionData.errors.username === "string") && (
+              <p className="text-sm font-semibold text-white">
+                Username:{" "}
+                {actionData.errors.username?._errors?.[0] ||
+                  actionData.errors.username}
+              </p>
+            )}
+
+            {(actionData.errors.avatar?._errors?.[0] ||
+              typeof actionData.errors.avatar === "string") && (
+              <p className="text-sm font-semibold text-white">
+                Avatar:{" "}
+                {actionData.errors.avatar?._errors?.[0] ||
+                  actionData.errors.avatar}
+              </p>
+            )}
+
+            {(actionData.errors.password?._errors?.[0] ||
+              typeof actionData.errors.password === "string") && (
+              <p className="text-sm font-semibold text-white">
+                Password:{" "}
+                {actionData.errors.password?._errors?.[0] ||
+                  actionData.errors.password}
+              </p>
+            )}
+
+            {(actionData.errors.confirmPassword?._errors?.[0] ||
+              typeof actionData.errors.confirmPassword ===
+                "string") && (
+              <p className="text-sm font-semibold text-white">
+                Confirm Password:{" "}
+                {actionData.errors.confirmPassword?._errors?.[0] ||
+                  actionData.errors.confirmPassword}
+              </p>
+            )}
+
+            {(actionData.errors._errors?.[0] ||
+              typeof actionData.errors.server === "string") && (
+              <p className="text-sm font-semibold text-white">
+                {actionData.errors._errors?.[0] ||
+                  actionData.errors.server}
+              </p>
+            )}
           </div>
         )}
         <Form
@@ -90,7 +147,6 @@ export default function RegisterPage({
             name="password"
             placeholder="password length : 6+ chars, at least 1 letter and 1 number"
             minLength={6}
-            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
           />
 
           <PasswordInput
@@ -98,7 +154,6 @@ export default function RegisterPage({
             name="confirmPassword"
             placeholder="Introduce your password again"
             minLength={6}
-            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
           />
           <div className="pt-2">
             <button

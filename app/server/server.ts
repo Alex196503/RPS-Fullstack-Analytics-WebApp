@@ -5,18 +5,33 @@ import express, {
 } from "express"
 import "dotenv/config" // Load environment variables from .env file
 import mongoose from "mongoose"
+import cookieParser from "cookie-parser"
+import path from "path"
 const app = express()
 const port = process.env.PORT || 5000
-import { router } from "../express-router/router"
+import { authRouter } from "../express-routers/authRouter"
+import { profileRouter } from "~/express-routers/profileRouter"
 await mongoose
   .connect(process.env.MONGODB_URI || "")
   .catch((err) => console.log("Failed to connect to MongoDB:", err))
 import cors from "cors"
-app.use(cors())
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true
+  })
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
-app.use("/api", router)
+//Adding a new cookie parser middleware
+app.use(cookieParser())
+//Middleware to ensure that static files like images are served with Express
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "app/uploads"))
+)
+app.use("/profile", profileRouter)
+app.use("/api", authRouter)
 //Global middleware error
 app.use(
   (err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +43,24 @@ app.use(
     })
   }
 )
+
+// Handle 404 errors for undefined routes
+app.use((req: Request, res: Response) => {
+  return res
+    .status(404)
+    .json({ success: false, message: "Route not found!" })
+})
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
+
+// Extend the Express Request interface globally to include the custom 'user' property.
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        user_id: string
+      }
+    }
+  }
+}

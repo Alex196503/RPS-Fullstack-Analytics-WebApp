@@ -9,7 +9,7 @@ export const PasswordInput = ({
   name: string
   placeholder: string
   minLength?: number
-  pattern: string
+  pattern?: string
 }) => {
   return (
     <>

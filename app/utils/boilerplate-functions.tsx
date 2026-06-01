@@ -1,6 +1,7 @@
 // This file contains boilerplate functions that can be used across the application.
 
 //This function validates the registration form inputs on the frontend before submission. It checks for required fields, email format, password strength, and file size for the avatar image. It returns an object containing error messages for any invalid fields or null if all inputs are valid.
+import { redirect } from "react-router"
 export const validateFrontendRegistration = (
   email: string,
   password: string,
@@ -8,32 +9,39 @@ export const validateFrontendRegistration = (
   avatarFile: File | null,
   confirmPassword: string
 ) => {
-  const errors: Record<string, string> = {}
+  const errors: Record<string, { _errors: string[] }> = {}
   if (!email) {
-    errors.email = "Email is required"
+    errors.email = { _errors: ["Email is required"] }
   } else if (
     typeof email === "string" &&
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   ) {
-    errors.email = "Please enter a valid email address"
+    errors.email = { _errors: ["Please enter a valid email address"] }
   }
   if (!password) {
-    errors.password = "Password is required"
+    errors.password = { _errors: ["Password is required"] }
   }
   if (!username) {
-    errors.username = "Username is required"
+    errors.username = { _errors: ["Username is required"] }
   }
   if (!avatarFile || avatarFile.name === "") {
-    errors.avatar = "Avatar image is required"
+    errors.avatar = { _errors: ["Avatar image is required"] }
   } else if (avatarFile.size > 5 * 1024 * 1024) {
-    errors.avatar = "Avatar file size must be less than 5MB"
+    errors.avatar = {
+      _errors: ["Avatar file size must be less than 5MB"]
+    }
   }
-  if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)) {
-    errors.password =
-      "Password must be at least 6 characters long and contain both letters and numbers"
+  if (!password) {
+    errors.password = { _errors: ["Password is required"] }
+  } else if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password)) {
+    errors.password = {
+      _errors: [
+        "Password must be at least 6 characters long and contain both letters and numbers."
+      ]
+    }
   }
   if (password !== confirmPassword) {
-    errors.confirmPassword = "Passwords do not match"
+    errors.confirmPassword = { _errors: ["Passwords do not match"] }
   }
   return Object.keys(errors).length > 0 ? errors : null
 }
@@ -43,23 +51,26 @@ export const validateFrontendLogin = (
   email: string,
   password: string
 ) => {
-  const errors: Record<string, string> = {}
+  const errors: Record<string, { _errors: string[] }> = {}
   if (!email) {
-    errors.email = "Email is required"
+    errors.email = { _errors: ["Email is required"] }
   } else if (
     typeof email === "string" &&
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   ) {
-    errors.email = "Please enter a valid email address"
+    errors.email = { _errors: ["Please enter a valid email address"] }
   }
   if (!password) {
-    errors.password = "Password is required"
+    errors.password = { _errors: ["Password is required"] }
   } else if (
     typeof password === "string" &&
-    !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)
+    !/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password)
   ) {
-    errors.password =
-      "Password must be at least 6 characters long and contain both letters and numbers"
+    errors.password = {
+      _errors: [
+        "Password must be at least 6 characters long and contain both letters and numbers."
+      ]
+    }
   }
   return Object.keys(errors).length > 0 ? errors : null
 }
@@ -81,7 +92,8 @@ export async function fetchAuthenticationApi(
           ? {}
           : {
               "Content-Type": "application/json"
-            }
+            },
+      credentials: "include"
     })
     const res = await req.json()
     if (!req.ok) {
@@ -103,4 +115,13 @@ export async function fetchAuthenticationApi(
       }
     }
   }
+}
+
+//Prevents authenticated users from accessing guest-only routes (like Login or Register). If a valid token cookie is detected, it automatically redirects them to the home page.
+export const redirectIfAuthenticated = (request: Request) => {
+  const cookieHeaders = request.headers.get("Cookie") || ""
+  if (cookieHeaders.includes("token=")) {
+    return redirect("/")
+  }
+  return null
 }

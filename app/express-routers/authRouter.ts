@@ -12,15 +12,11 @@ import {
 } from "../utils/zod-validation"
 import multer from "multer"
 import bcrypt from "bcrypt"
-const upload = multer({ dest: "uploads/" })
-export const router = express.Router()
-
-router.get("/", (req: Request, res: Response) => {
-  res.send("Test route for our API!")
-})
+const upload = multer({ dest: "app/uploads/" })
+export const authRouter = express.Router()
 
 //The register route that performs and validates our register based on our zod validation schema
-router.post(
+authRouter.post(
   "/register",
   upload.single("avatar"),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -55,8 +51,10 @@ router.post(
       if (userAlreadyExists) {
         return res.status(400).json({
           success: false,
-          message:
-            "An account with this email address already exists."
+          errors: {
+            server:
+              "An account with this email address already exists."
+          }
         })
       }
       let salt = await bcrypt.genSalt(10)
@@ -75,7 +73,8 @@ router.post(
           id: user._id,
           username: user.username,
           email: user.email,
-          avatar: user.avatar
+          avatar: user.avatar,
+          createdAt: user.createdAt
         }
       })
     } catch (err) {
@@ -84,7 +83,7 @@ router.post(
   }
 )
 
-router.post(
+authRouter.post(
   "/login",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -123,6 +122,13 @@ router.post(
         secret_key,
         { expiresIn: "1h" }
       )
+      // Set the JWT token in an HTTP-only cookie
+      res.cookie("token", jwt_data, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 3600000
+      })
       return res.status(200).json({
         message: "Login succesful",
         success: true,

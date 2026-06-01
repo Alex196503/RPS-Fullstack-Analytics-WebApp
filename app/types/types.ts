@@ -96,6 +96,13 @@ export type FormData = {
   avatar: string
 }
 
+export type UserProps = {
+  username: string,
+  email: string,
+  avatar: string,
+  createdAt: string
+}
+
 export type User = Pick<
   FormData,
   "email" | "password" | "avatar" | "username"
