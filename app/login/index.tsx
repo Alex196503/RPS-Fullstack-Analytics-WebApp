@@ -4,10 +4,17 @@ import { PasswordInput } from "~/components/RegisterComponents/PasswordInput"
 import { Link } from "react-router"
 import type { Route } from "./+types"
 import { redirect } from "react-router"
+
 import {
   fetchAuthenticationApi,
+  redirectIfAuthenticated,
   validateFrontendLogin
 } from "~/utils/boilerplate-functions"
+
+export async function loader({ request }: Route.ActionArgs) {
+  //Calling the function which checks if the users are logged in or not
+  return redirectIfAuthenticated(request)
+}
 export async function action({ request }: Route.ActionArgs) {
   let formData = await request.formData()
   let email = formData.get("email") as string
@@ -16,22 +23,28 @@ export async function action({ request }: Route.ActionArgs) {
   if (errors) {
     return { success: false, errors }
   }
-  const payload = {
-    email,
-    password
-  }
-  //Calling the utility function to make the API call to the authentication server for login.
+  const payload = { email, password }
+
   const result = await fetchAuthenticationApi(
     "http://localhost:5000/api/login",
     payload
   )
-  if (!result.success) {
+
+  if (!result || result.success === false || !result.data) {
     return {
-      errors: result.errors
+      success: false,
+      errors: result?.errors || {
+        server: "Invalid email or password!"
+      }
     }
   }
 
-  return redirect("/")
+  // Set the JWT token in an HTTP-only cookie on the frontend domain via response headers This ensures the token is available to subsequent server-side loaders during React Router's revalidation phase.
+  return redirect("/", {
+    headers: {
+      "Set-Cookie": `token=${result.data.token}; Path=/; HttpOnly; Max-Age=3600; SameSite=Lax`
+    }
+  })
 }
 export default function LoginPage({
   actionData
@@ -48,12 +61,30 @@ export default function LoginPage({
           </p>
         </div>
         {actionData?.errors && (
-          <div className="mb-6 px-4 py-5 bg-red-700 text-red-100 text-center rounded-lg border border-red-500 shadow-md">
-            {Object.values(actionData?.errors).map((error, index) => (
-              <p className="text-sm text-red-400 mt-1" key={index}>
-                {index + 1}. {error as string}
+          <div className="mb-6 px-4 py-5 bg-red-700 flex flex-col gap-2 text-red-100 text-center rounded-lg border border-red-500 shadow-md">
+            {actionData?.errors?.email?._errors?.[0] && (
+              <p className="text-sm font-semibold text-white">
+                Email: {actionData.errors.email._errors[0]}
               </p>
-            ))}
+            )}
+
+            {actionData?.errors?.password?._errors?.[0] && (
+              <p className="text-sm font-semibold text-white">
+                Password: {actionData.errors.password._errors[0]}
+              </p>
+            )}
+
+            {actionData?.errors?.server && (
+              <p className="text-sm font-semibold text-white">
+                {actionData.errors.server}
+              </p>
+            )}
+
+            {typeof actionData?.errors === "string" && (
+              <p className="text-sm font-semibold text-white">
+                {actionData.errors}
+              </p>
+            )}
           </div>
         )}
         <Form
@@ -71,7 +102,6 @@ export default function LoginPage({
             label="Password"
             name="password"
             placeholder="Enter your password"
-            pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
           />
 
           <div className="pt-2">

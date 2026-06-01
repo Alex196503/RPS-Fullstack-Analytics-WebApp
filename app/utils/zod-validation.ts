@@ -35,7 +35,7 @@ export const RegisterSchema = z
       .string("The password is required")
       .min(6, "Password must be at least 6 characters long")
       .regex(
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+        /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
         "Password must contain at least one letter and one number"
       ),
     confirmPassword: z.string("Confirm password is required")
@@ -45,16 +45,19 @@ export const RegisterSchema = z
     path: ["confirmPassword"]
   })
 
-  //Defined Zod Schema for login form validation
-  export const LoginSchema = z.object({
-    email: z.string("The email is required").email("Invalid email address").min(10, "Email must be at least 10 characters long"),
-    password:  z
-      .string("The password is required")
-      .min(6, "Password must be at least 6 characters long")
-      .regex(
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-        "Password must contain at least one letter and one number"
-      )
-  });
+//Defined Zod Schema for login form validation
+export const LoginSchema = z.object({
+  email: z
+    .string("The email is required")
+    .email("Invalid email address")
+    .min(10, "Email must be at least 10 characters long"),
+  password: z
+    .string("The password is required")
+    .min(6, "Password must be at least 6 characters long")
+    .regex(
+      /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
+      "Password must contain at least one letter and one number"
+    )
+})
 
 export type RegisterInput = z.infer<typeof RegisterSchema>
