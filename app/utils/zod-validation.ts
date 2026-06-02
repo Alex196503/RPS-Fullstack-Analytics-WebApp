@@ -61,3 +61,22 @@ export const LoginSchema = z.object({
 })
 
 export type RegisterInput = z.infer<typeof RegisterSchema>
+
+//Edit profile schema that validates the username, email and password fields
+export const EditProfileSchema = z.object({
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Invalid email format"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(
+      /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
+      "Password must contain at least one letter and one number"
+    )
+    .optional()
+    .or(z.literal(""))
+})
+
+export type EditProfileInput = z.infer<typeof EditProfileSchema>

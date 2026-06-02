@@ -22,9 +22,12 @@ export const ProfileViewContainer = ({
             credentials: "include"
           }
         )
-        const data = await res.json()
+        const data = (await res.json()) as {
+          success: boolean
+          message?: string
+        }
         if (data.success) {
-          window.location.href = "/login"
+          window.location.href = "/login?deleted=true"
         } else {
           alert(data.message || "Failed to delete profile.")
         }
@@ -64,21 +67,22 @@ export const ProfileViewContainer = ({
         </p>
         <p className="text-xs text-gray-400 mt-4 italic">
           Member since:{" "}
-          {new Date(createdAt).toLocaleDateString("ro-RO", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-          })}
+          {new Date(createdAt || Date.now()).toLocaleDateString(
+            "ro-RO",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            }
+          )}
         </p>
         <div className="w-full flex flex-col md:flex-row justify-center md:justify-between items-center mt-5">
-          <Form action="/edit" method="POST">
-            <button
-              type="submit"
-              className="mt-6 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 text-sm font-bold uppercase tracking-wider rounded-md shadow-md hover:shadow-blue-500/20 transition-all duration-200 text-center"
-            >
-              Edit your profile
-            </button>
-          </Form>
+          <Link
+            to="/profile"
+            className="mt-6 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-95 text-sm font-bold uppercase tracking-wider rounded-md shadow-md hover:shadow-blue-500/20 transition-all duration-200 text-center"
+          >
+            Edit your profile
+          </Link>
           <button
             type="button"
             onClick={handleDeleteProfile}

@@ -10,7 +10,7 @@ export const UploadInput = ({
       <div className="form-container">
         <label
           className="block text-xs font-bold uppercase tracking-wide text-gray-400 mb-1"
-          htmlFor="avatar"
+          htmlFor={name}
         >
           {label}
         </label>
