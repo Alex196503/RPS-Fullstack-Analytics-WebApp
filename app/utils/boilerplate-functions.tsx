@@ -2,6 +2,7 @@
 
 //This function validates the registration form inputs on the frontend before submission. It checks for required fields, email format, password strength, and file size for the avatar image. It returns an object containing error messages for any invalid fields or null if all inputs are valid.
 import { redirect } from "react-router"
+import { toast } from "react-toastify"
 export const validateFrontendRegistration = (
   email: string,
   password: string,
@@ -124,4 +125,70 @@ export const redirectIfAuthenticated = (request: Request) => {
     return redirect("/")
   }
   return null
+}
+
+//Utility helper to fetch authenticated user profile data from the Express backend. Automatically forwards session cookies from the client request for authentication validation
+export const fetchUserData = async (request: Request) => {
+  const cookieHeaders = request.headers.get("Cookie") || ""
+  const res = await fetch("http://localhost:5000/profile", {
+    headers: {
+      Cookie: cookieHeaders,
+      "Content-Type": "application/json"
+    },
+    credentials: "include"
+  })
+  if (
+    res.status === 401 ||
+    res.status === 403 ||
+    res.status === 402
+  ) {
+    return redirect("/login")
+  }
+  let serverResponse = await res.json()
+  return serverResponse.data
+}
+
+//Function to change the image of the avatar preview when the user selects a new file.
+export const handleAvatarChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  setCurrentAvatar: React.Dispatch<React.SetStateAction<string>>,
+  setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>
+) => {
+  const file = e.target.files?.[0]
+  if (file) {
+    setSelectedFile(file)
+    const reader = new FileReader()
+    reader.onload = () => {
+      setCurrentAvatar(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+//Function that checks if there are any changes made to the profile form fields. If no changes are detected, it shows an info toast message and prevents the form submission.
+export const hasNoProfileChanges = (
+  currentUsername: string,
+  username: string,
+  currentEmail: string,
+  email: string,
+  currentPassword: string,
+  selectedFile: File | null
+) => {
+  const isUserNameUnchanged = currentUsername === username
+  const isEmailUnchanged = currentEmail === email
+  const isPasswordEmpty = currentPassword === ""
+  const isAvatarUnchanged = selectedFile === null
+  if (
+    isUserNameUnchanged &&
+    isEmailUnchanged &&
+    isPasswordEmpty &&
+    isAvatarUnchanged
+  ) {
+    toast.info("No changes made to the profile.", {
+      position: "top-right",
+      autoClose: 3000
+    })
+    return { hasChanges: false, shouldStop: true }
+  }
+  return { hasChanges: true, shouldStop: false }
 }

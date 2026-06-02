@@ -1,8 +1,8 @@
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
-import { redirect } from "react-router"
 import { ProfileViewContainer } from "~/components/ProfileFileComponents/ProfileViewContainer"
 import type { UserProps } from "~/types/types"
+import { fetchUserData } from "~/utils/boilerplate-functions"
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,23 +13,7 @@ export function meta({}: Route.MetaArgs) {
 
 //Function that redirects the user to the login page if he is not logged in based on the api response, that checks if the user has got a jwt token
 export async function loader({ request }: { request: Request }) {
-  const cookieHeaders = request.headers.get("Cookie") || ""
-  const res = await fetch("http://localhost:5000/profile", {
-    headers: {
-      Cookie: cookieHeaders,
-      "Content-Type": "application/json"
-    },
-    credentials: "include"
-  })
-  if (
-    res.status === 401 ||
-    res.status === 403 ||
-    res.status === 402
-  ) {
-    return redirect("/login")
-  }
-  let serverResponse = await res.json()
-  return serverResponse.data
+  return await fetchUserData(request)
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {

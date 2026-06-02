@@ -3,13 +3,19 @@ export const PasswordInput = ({
   name,
   placeholder,
   minLength = 6,
-  pattern
+  pattern,
+  required = true,
+  value,
+  onChange
 }: {
   label: string
   name: string
   placeholder: string
   minLength?: number
   pattern?: string
+  value?: string
+  required?: boolean
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
   return (
     <>
@@ -24,11 +30,13 @@ export const PasswordInput = ({
           type="password"
           id={name}
           name={name}
-          required
+          required={required}
+          value={value}
           pattern={pattern}
           minLength={minLength}
           placeholder={placeholder}
           className="w-full px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-md focus:outline-none focus:border-blue-500 text-white transition-colors"
+          onChange={onChange}
         />
       </div>
     </>
