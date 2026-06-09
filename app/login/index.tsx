@@ -5,12 +5,8 @@ import { Link } from "react-router"
 import type { Route } from "./+types"
 import { redirect } from "react-router"
 
-import {
-  fetchAuthenticationApi,
-  redirectIfAuthenticated,
-  validateFrontendLogin
-} from "~/utils/boilerplate-functions"
-
+import { fetchAuthenticationApi } from "~/utils/frontend-boilerplate/frontend-functions"
+import { redirectIfAuthenticated, validateFrontendLogin } from "~/utils/frontend-boilerplate/auth-utils"
 export async function loader({ request }: Route.ActionArgs) {
   //Calling the function which checks if the users are logged in or not
   return redirectIfAuthenticated(request)

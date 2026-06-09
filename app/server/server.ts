@@ -15,6 +15,7 @@ await mongoose
   .connect(process.env.MONGODB_URI || "")
   .catch((err) => console.log("Failed to connect to MongoDB:", err))
 import cors from "cors"
+import { scoreRouter } from "~/express-routers/scoreRouter"
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -30,8 +31,11 @@ app.use(
   "/uploads",
   express.static(path.join(process.cwd(), "app/uploads"))
 )
+
+// Registering default routers to map domain-specific endpoints to their respective routers
 app.use("/profile", profileRouter)
 app.use("/api", authRouter)
+app.use("/score", scoreRouter)
 //Global middleware error
 app.use(
   (err: Error, req: Request, res: Response, next: NextFunction) => {

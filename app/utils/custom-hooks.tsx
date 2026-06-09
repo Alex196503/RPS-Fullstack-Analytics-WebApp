@@ -65,7 +65,7 @@ export function useResultGame(
         setMessage("You lost!")
       }
     }
-  }, [HouseChoiceMessage, choice])
+  }, [HouseChoiceMessage, choice, setMessage])
 }
 
 // Custom hook to safely consume the reset context.
@@ -77,23 +77,6 @@ export function useResetContext() {
     )
   }
   return context
-}
-
-//Custom Hook that automatically updates the game score based on the match result message. It listens to the 'message' dependency to prevent infinite loops and ensures
-export function useGameScoreSync(
-  message: string,
-  setScore: (value: React.SetStateAction<number | null>) => void
-) {
-  useEffect(() => {
-    if (!message) return
-    if (message.toLowerCase().includes("win"))
-      setScore((prev) => (prev !== null ? prev + 1 : null))
-    else if (message.toLowerCase().includes("lost")) {
-      setScore((prev) =>
-        prev !== null ? Math.max(0, prev - 1) : null
-      )
-    }
-  }, [message])
 }
 
 export function useThemeContext() {

@@ -27,6 +27,7 @@ export interface GameBadgeProps {
   item: BadgeData
   menu: "custom" | "advanced" | "classic"
   onClick?: () => void
+  isDuelMode?: boolean
 }
 export type ModalProps = {
   name: string
@@ -40,8 +41,8 @@ export type ButtonProps = {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 export type GameOutletContextProps = {
-  score: number | null
-  setScore: React.Dispatch<React.SetStateAction<number | null>>
+  score?: number | null
+  setScore?: React.Dispatch<React.SetStateAction<number | null>>
   isMenuOpen: boolean
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -54,8 +55,6 @@ export interface GameDuelProps {
   HouseChoice: number | null
   message: string
   setMessage: React.Dispatch<React.SetStateAction<string>>
-  score?: number | null
-  setScore: React.Dispatch<React.SetStateAction<number | null>>
 }
 
 export interface GameResultContainerProps {
@@ -125,4 +124,13 @@ export interface EditProfileResponse {
   errors?: {
     [key: string]: string[]
   }
+}
+
+export interface ScoreDBResponse {
+  message: string
+  scores: {
+    classic: { totalScore: number }
+    advanced: { totalScore: number }
+  }
+  success: boolean
 }

@@ -2,11 +2,12 @@ import { GameBadge } from "~/components/PlayFileComponents/GameBadge"
 import { type Route } from "../routes/+types/home"
 import { GameBadges } from "~/config/gameConfig"
 import { ModalRules } from "../components/PlayFileComponents/ModalRules"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { GameDuel } from "~/components/PlayFileComponents/GameDuel"
 import { useOutletContext } from "react-router"
 import type { GameOutletContextProps } from "~/types/types"
 import { motion } from "motion/react"
+import { useFetcher } from "react-router"
 import useMenuResponsiveClose, {
   useRandomDelayedIndex
 } from "../utils/custom-hooks"
@@ -19,7 +20,7 @@ export function meta({}: Route.MetaArgs) {
 }
 let menu = "advanced" as const
 export default function AdvancedGame() {
-  const { isMenuOpen, setMenuOpen, setScore, score } =
+  const { isMenuOpen, setMenuOpen } =
     useOutletContext<GameOutletContextProps>()
   useMenuResponsiveClose(isMenuOpen, setMenuOpen)
   const [choice, setChoice] = useState("")
@@ -31,6 +32,7 @@ export default function AdvancedGame() {
     null
   )
   useRandomDelayedIndex(choice, setHouseChoice, GameBadges.length)
+
   return (
     <resetContext.Provider
       value={{ setChoice, setHouseChoice, setMessage }}
@@ -110,14 +112,12 @@ export default function AdvancedGame() {
         </motion.div>
         <GameDuel
           HouseChoice={houseChoiceIndex}
-          menu="classic"
+          menu="advanced"
           indexChoice={indexChoice}
           choice={choice}
           GameBadges={GameBadges}
           message={message}
           setMessage={setMessage}
-          score={score}
-          setScore={setScore}
         />
       </main>
     </resetContext.Provider>

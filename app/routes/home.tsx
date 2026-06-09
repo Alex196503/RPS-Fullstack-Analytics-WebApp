@@ -2,7 +2,7 @@ import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
 import { ProfileViewContainer } from "~/components/ProfileFileComponents/ProfileViewContainer"
 import type { UserProps } from "~/types/types"
-import { fetchUserData } from "~/utils/boilerplate-functions"
+import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 
 export function meta({}: Route.MetaArgs) {
   return [
