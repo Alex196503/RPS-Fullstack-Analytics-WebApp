@@ -3,12 +3,13 @@ import type { GameBadgeProps } from "~/types/types"
 export const GameBadge = ({
   item,
   menu,
-  onClick
+  onClick,
+  isDuelMode = false
 }: GameBadgeProps) => {
   const menuProperties = {
     classic: "",
-    advanced: item.advancedProperties,
-    custom: item.customProperties
+    advanced: isDuelMode ? "" : item.advancedProperties,
+    custom: isDuelMode ? "" : item.customProperties
   }
   const currentProperties = menuProperties[menu]
   return (

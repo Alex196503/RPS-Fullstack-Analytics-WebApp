@@ -3,18 +3,17 @@ import { GameBadge } from "./GameBadge"
 import { GameBadges, gameFunctions } from "~/config/gameConfig"
 import { motion } from "framer-motion"
 import { GameResult } from "./GameResult"
+import { useRevalidator } from "react-router"
 import { WinnerGlow } from "./WinnerGlow"
 import { useEffect } from "react"
-import { useGameScoreSync } from "~/utils/custom-hooks"
+import { parseGameOutcome } from "~/utils/frontend-boilerplate/frontend-functions"
 export const GameDuel = ({
   indexChoice,
   menu = "classic",
   choice,
   HouseChoice,
   message,
-  setMessage,
-  score,
-  setScore
+  setMessage
 }: GameDuelProps) => {
   let HouseChoiceMessage =
     HouseChoice !== null
@@ -22,7 +21,47 @@ export const GameDuel = ({
       : null
   let isPlayerWinner = message.toLowerCase().includes("win")
   let isHouseWinner = message.toLowerCase().includes("lost")
-  useGameScoreSync(message, setScore)
+
+  //useRevalidator hook used to execute all the active loaders to bring data freshly from the DB, without having to reload the page in the browser
+  let validate = useRevalidator()
+
+  useEffect(() => {
+    if (!message) return
+    let cleanOutcome = parseGameOutcome(message)
+
+    if (cleanOutcome) {
+      fetch("http://localhost:5000/score/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          outcome: cleanOutcome,
+          gamemode: menu
+        })
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(
+              `Error caused from the server: ${res.statusText}`
+            )
+          }
+          return res.json()
+        })
+        .then((data) => {
+          validate.revalidate()
+          console.log("Request succedeed! Score saved into DB!", data)
+        })
+        .catch((err) => {
+          console.error(
+            "Something bad happened with the request",
+            err
+          )
+        })
+    }
+  }, [message, menu])
+
   return (
     <motion.section
       className={`w-full max-w-[360px] md:max-w-[750px] flex-wrap md:flex-nowrap mx-auto flex justify-between items-center mt-8 px-4 ${choice.length > 0 ? "flex" : "hidden"}`}
@@ -35,7 +74,11 @@ export const GameDuel = ({
         {indexChoice !== -1 && (
           <div className="relative z-10">
             {isPlayerWinner && <WinnerGlow />}
-            <GameBadge item={GameBadges[indexChoice]} menu={menu} />
+            <GameBadge
+              item={GameBadges[indexChoice]}
+              menu={menu}
+              isDuelMode={true}
+            />
           </div>
         )}
       </div>
@@ -50,7 +93,11 @@ export const GameDuel = ({
         {HouseChoice !== null ? (
           <div className="relative z-10">
             {isHouseWinner && <WinnerGlow />}
-            <GameBadge item={GameBadges[HouseChoice]} menu={menu} />
+            <GameBadge
+              item={GameBadges[HouseChoice]}
+              menu={menu}
+              isDuelMode={true}
+            />
           </div>
         ) : (
           <div className="w-[130px] h-[130px] md:w-[150px] md:h-[150px] bg-black/10 rounded-full"></div>

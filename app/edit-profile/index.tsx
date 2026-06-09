@@ -5,12 +5,15 @@ import { TextInput } from "~/components/RegisterComponents/TextInput"
 import type { Route } from "./+types"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { fetchUserData } from "~/utils/boilerplate-functions"
+
 import type { EditProfileResponse, InitialData } from "~/types/types"
 import { useState } from "react"
 import { Link } from "react-router"
-import { hasNoProfileChanges } from "~/utils/boilerplate-functions"
-import { handleAvatarChange } from "../utils/boilerplate-functions"
+import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
+import {
+  handleAvatarChange,
+  hasNoProfileChanges
+} from "~/utils/frontend-boilerplate/profile-utils"
 export async function loader({ request }: { request: Request }) {
   return await fetchUserData(request)
 }

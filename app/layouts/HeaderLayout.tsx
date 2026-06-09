@@ -2,31 +2,50 @@ import { TitleComponents } from "~/components/PlayFileComponents/GameLogoText"
 import { ScoreContainer } from "~/components/PlayFileComponents/StatBox"
 import { Outlet, useLocation } from "react-router"
 import { gameFunctions } from "~/config/gameConfig"
-import { useEffect, useState } from "react"
 import { Navbar } from "~/components/MainFileComponents/Navbar"
-// Pass 'score' from HeaderLayout down to the final layout child. React Router's useOutletContext() only reads from the closest parent, so we must merge Header props with Footer props here to receive all 4 in GameApp.
-export default function HeaderLayout() {
+import type { Route } from "../+types/root"
+import type { ScoreDBResponse } from "~/types/types"
+
+//Dynamic loader that extracts user score from the DB, identifying the game mode based on the current URL
+export async function loader({ request }: Route.LoaderArgs) {
+  const cookieHeaders = request.headers.get("Cookie") || ""
+  const url = new URL(request.url)
+  const isAdvancedPage = url.pathname.includes("advanced")
+  const gameMode = isAdvancedPage ? "advanced" : "classic"
+  try {
+    let req = await fetch("http://localhost:5000/score", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieHeaders
+      },
+      credentials: "include"
+    })
+    if (!req.ok) {
+      throw new Error(
+        `Something bad happened with the request! ${req.statusText}`
+      )
+    }
+    const resData = (await req.json()) as ScoreDBResponse
+    const finalScore = resData.scores[gameMode].totalScore
+    return finalScore
+  } catch (error) {
+    console.error(error)
+    return 0
+  }
+}
+
+export default function HeaderLayout({
+  loaderData
+}: Route.ComponentProps) {
   let url = useLocation()
+  const score = (loaderData ?? 0) as number
   let dynamicGameFunctions: string[]
   if (url.pathname.toLowerCase().includes("advanced")) {
     dynamicGameFunctions = gameFunctions.slice()
   } else {
     dynamicGameFunctions = gameFunctions.slice(0, 3)
   }
-  let [score, setScore] = useState<number>(0)
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      let score = localStorage.getItem("score")
-      if (score) {
-        setScore(JSON.parse(score))
-      }
-    }
-  }, [])
-  useEffect(() => {
-    if (typeof window !== "undefined" && score > 0) {
-      localStorage.setItem("score", JSON.stringify(score))
-    }
-  }, [score])
   return (
     <>
       <header className="w-full flex flex-col">
@@ -36,7 +55,7 @@ export default function HeaderLayout() {
           <ScoreContainer title="Score" value={score} />
         </div>
       </header>
-      <Outlet context={{ score, setScore }} />
+      <Outlet />
     </>
   )
 }

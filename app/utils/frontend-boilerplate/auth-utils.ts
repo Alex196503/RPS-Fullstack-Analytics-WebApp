@@ -1,8 +1,6 @@
-// This file contains boilerplate functions that can be used across the application.
+import { redirect } from "react-router"
 
 //This function validates the registration form inputs on the frontend before submission. It checks for required fields, email format, password strength, and file size for the avatar image. It returns an object containing error messages for any invalid fields or null if all inputs are valid.
-import { redirect } from "react-router"
-import { toast } from "react-toastify"
 export const validateFrontendRegistration = (
   email: string,
   password: string,
@@ -76,48 +74,6 @@ export const validateFrontendLogin = (
   return Object.keys(errors).length > 0 ? errors : null
 }
 
-//This function is a utility for making API calls to the authentication server. It takes the API endpoint, a redirect link, and the payload (form data) as arguments. It handles the fetch request and returns a standardized response object indicating success or failure, along with any error messages or data returned from the server.
-export async function fetchAuthenticationApi(
-  link: string,
-  payload: FormData | Record<string, string>
-) {
-  try {
-    let req = await fetch(link, {
-      method: "POST",
-      body:
-        payload instanceof FormData
-          ? payload
-          : JSON.stringify(payload),
-      headers:
-        payload instanceof FormData
-          ? {}
-          : {
-              "Content-Type": "application/json"
-            },
-      credentials: "include"
-    })
-    const res = await req.json()
-    if (!req.ok) {
-      return {
-        success: false,
-        errors: res.errors || { server: res.message }
-      }
-    }
-    return {
-      success: true,
-      errors: null,
-      data: res
-    }
-  } catch (err) {
-    return {
-      success: false,
-      errors: {
-        global: "Could not connect to the authentication server."
-      }
-    }
-  }
-}
-
 //Prevents authenticated users from accessing guest-only routes (like Login or Register). If a valid token cookie is detected, it automatically redirects them to the home page.
 export const redirectIfAuthenticated = (request: Request) => {
   const cookieHeaders = request.headers.get("Cookie") || ""
@@ -146,49 +102,4 @@ export const fetchUserData = async (request: Request) => {
   }
   let serverResponse = await res.json()
   return serverResponse.data
-}
-
-//Function to change the image of the avatar preview when the user selects a new file.
-export const handleAvatarChange = (
-  e: React.ChangeEvent<HTMLInputElement>,
-  setCurrentAvatar: React.Dispatch<React.SetStateAction<string>>,
-  setSelectedFile: React.Dispatch<React.SetStateAction<File | null>>
-) => {
-  const file = e.target.files?.[0]
-  if (file) {
-    setSelectedFile(file)
-    const reader = new FileReader()
-    reader.onload = () => {
-      setCurrentAvatar(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
-}
-
-//Function that checks if there are any changes made to the profile form fields. If no changes are detected, it shows an info toast message and prevents the form submission.
-export const hasNoProfileChanges = (
-  currentUsername: string,
-  username: string,
-  currentEmail: string,
-  email: string,
-  currentPassword: string,
-  selectedFile: File | null
-) => {
-  const isUserNameUnchanged = currentUsername === username
-  const isEmailUnchanged = currentEmail === email
-  const isPasswordEmpty = currentPassword === ""
-  const isAvatarUnchanged = selectedFile === null
-  if (
-    isUserNameUnchanged &&
-    isEmailUnchanged &&
-    isPasswordEmpty &&
-    isAvatarUnchanged
-  ) {
-    toast.info("No changes made to the profile.", {
-      position: "top-right",
-      autoClose: 3000
-    })
-    return { hasChanges: false, shouldStop: true }
-  }
-  return { hasChanges: true, shouldStop: false }
 }

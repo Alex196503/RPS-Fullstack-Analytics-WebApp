@@ -18,8 +18,9 @@ export function meta({}: Route.MetaArgs) {
   ]
 }
 let menu = "custom" as const
+
 export default function GameApp() {
-  const { isMenuOpen, setMenuOpen, score, setScore } =
+  const { isMenuOpen, setMenuOpen } =
     useOutletContext<GameOutletContextProps>()
   useMenuResponsiveClose(isMenuOpen, setMenuOpen)
   const [choice, setChoice] = useState("")
@@ -84,8 +85,6 @@ export default function GameApp() {
           HouseChoice={houseChoiceIndex}
           message={message}
           setMessage={setMessage}
-          score={score}
-          setScore={setScore}
         />
       </main>
     </resetContext.Provider>

@@ -1,12 +1,12 @@
 import { Link, redirect } from "react-router"
 import { Form } from "react-router"
 import {
-  fetchAuthenticationApi,
-  redirectIfAuthenticated
-} from "~/utils/boilerplate-functions"
+  redirectIfAuthenticated,
+  validateFrontendRegistration
+} from "~/utils/frontend-boilerplate/auth-utils"
+import { fetchAuthenticationApi } from "~/utils/frontend-boilerplate/frontend-functions"
 import type { Route } from "./+types"
 import { EmailInput } from "~/components/RegisterComponents/EmailInput"
-import { validateFrontendRegistration } from "~/utils/boilerplate-functions"
 import { TextInput } from "~/components/RegisterComponents/TextInput"
 import { UploadInput } from "~/components/RegisterComponents/UploadInput"
 import { PasswordInput } from "~/components/RegisterComponents/PasswordInput"
