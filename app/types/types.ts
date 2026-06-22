@@ -134,3 +134,28 @@ export interface ScoreDBResponse {
   }
   success: boolean
 }
+
+export interface ScoreReqBody {
+  outcome: string
+  gamemode: string
+  playerMove: string
+  opponentMove: string
+  result: string
+}
+
+export interface MatchesDBResponse {
+  success: boolean
+  message: string
+  data: {
+    _id: string
+    user: string
+    playerMove: string
+    opponentMove: string
+    result: "win" | "loss" | "draw"
+    mode: "classic" | "advanced"
+    createdAt: string
+  }[]
+}
+
+//Indexed access type functionality from TypeScript used here!
+export type GameMatch = MatchesDBResponse["data"][number]

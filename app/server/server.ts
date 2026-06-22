@@ -16,6 +16,7 @@ await mongoose
   .catch((err) => console.log("Failed to connect to MongoDB:", err))
 import cors from "cors"
 import { scoreRouter } from "~/express-routers/scoreRouter"
+import { matchRouter } from "~/express-routers/matchRouter"
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -36,6 +37,7 @@ app.use(
 app.use("/profile", profileRouter)
 app.use("/api", authRouter)
 app.use("/score", scoreRouter)
+app.use("/match", matchRouter)
 //Global middleware error
 app.use(
   (err: Error, req: Request, res: Response, next: NextFunction) => {

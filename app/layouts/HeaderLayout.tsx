@@ -21,6 +21,10 @@ export async function loader({ request }: Route.LoaderArgs) {
       },
       credentials: "include"
     })
+    if (req.status === 401 || req.status === 403) {
+      console.log("User not logged in! Returning score 0!")
+      return 0
+    }
     if (!req.ok) {
       throw new Error(
         `Something bad happened with the request! ${req.statusText}`

@@ -38,7 +38,11 @@ export const GameDuel = ({
         credentials: "include",
         body: JSON.stringify({
           outcome: cleanOutcome,
-          gamemode: menu
+          gamemode: menu,
+          playerMove:choice.toLowerCase(),
+          opponentMove:HouseChoiceMessage,
+          result:cleanOutcome
+
         })
       })
         .then((res) => {
@@ -60,7 +64,7 @@ export const GameDuel = ({
           )
         })
     }
-  }, [message, menu])
+  }, [message, menu, choice, HouseChoiceMessage])
 
   return (
     <motion.section

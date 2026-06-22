@@ -100,6 +100,13 @@ export const fetchUserData = async (request: Request) => {
   ) {
     return redirect("/login")
   }
-  let serverResponse = await res.json()
+  let serverResponse = (await res.json()) as {
+    data: {
+      _id: string
+      username: string
+      avatar: string
+      email?: string
+    }
+  }
   return serverResponse.data
 }

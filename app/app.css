@@ -63,3 +63,6 @@ html.light body {
 .form-container {
   @apply mb-2 flex flex-col gap-y-2 py-1;
 }
+.span-player {
+  @apply text-xs text-slate-400 font-medium;
+}

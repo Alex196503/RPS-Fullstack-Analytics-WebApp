@@ -2,21 +2,24 @@ import { GameBadge } from "~/components/PlayFileComponents/GameBadge"
 import { type Route } from "../routes/+types/home"
 import { GameBadges } from "~/config/gameConfig"
 import { ModalRules } from "../components/PlayFileComponents/ModalRules"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { GameDuel } from "~/components/PlayFileComponents/GameDuel"
 import { useOutletContext } from "react-router"
 import type { GameOutletContextProps } from "~/types/types"
 import { motion } from "motion/react"
-import { useFetcher } from "react-router"
 import useMenuResponsiveClose, {
   useRandomDelayedIndex
 } from "../utils/custom-hooks"
 import { resetContext } from "~/utils/context"
+import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Custom game playing background" },
     { name: "description", content: "Welcome to my game interface" }
   ]
+}
+export async function loader({ request }: Route.ActionArgs) {
+  return fetchUserData(request)
 }
 let menu = "advanced" as const
 export default function AdvancedGame() {

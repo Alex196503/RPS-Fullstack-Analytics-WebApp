@@ -1,5 +1,5 @@
-import mongoose, { Schema, model } from "mongoose"
-// Define the User schema
+import mongoose, { Schema } from "mongoose"
+// Defining the User schema
 const userSchema = new Schema(
   {
     username: { type: String, required: true },
@@ -21,6 +21,7 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 )
+
 //Mongoose middleware to calculate the total score every time user data is saved into database
 userSchema.pre("save", function () {
   if (this.classicScore) {
