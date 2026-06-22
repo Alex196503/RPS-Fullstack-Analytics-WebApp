@@ -1,6 +1,7 @@
 import { type Route } from "../routes/+types/home"
 import { GameBadge } from "~/components/PlayFileComponents/GameBadge"
 import { GameBadges } from "~/config/gameConfig"
+
 import { ModalRules } from "../components/PlayFileComponents/ModalRules"
 import useMenuResponsiveClose, {
   useRandomDelayedIndex
@@ -11,6 +12,7 @@ import { useState } from "react"
 import { GameDuel } from "~/components/PlayFileComponents/GameDuel"
 import { motion } from "motion/react"
 import { resetContext } from "~/utils/context"
+import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Custom game playing background" },
@@ -18,6 +20,10 @@ export function meta({}: Route.MetaArgs) {
   ]
 }
 let menu = "custom" as const
+
+export async function loader({ request }: Route.ActionArgs) {
+  return await fetchUserData(request)
+}
 
 export default function GameApp() {
   const { isMenuOpen, setMenuOpen } =

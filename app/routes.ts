@@ -11,6 +11,7 @@ export default [
   route("/login", "./login/index.tsx"),
   route("/logout", "./logout/index.tsx"),
   route("/profile", "./edit-profile/index.tsx"),
+  route("/history", "./history/index.tsx"),
   layout("./layouts/HeaderLayout.tsx", [
     layout("./layouts/FooterLayout.tsx", [
       route("play/classic", "./custom-game/index.tsx"),
