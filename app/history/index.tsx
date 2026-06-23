@@ -3,7 +3,9 @@ import type { Route } from "../+types/root"
 import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 import type { MatchesDBResponse } from "~/types/types"
 import { useLoaderData } from "react-router"
+import React, { useState } from "react"
 import MatchCard from "~/components/HistoryComponents/MatchCard"
+import { SelectInput } from "~/components/HistoryComponents/SelectInput"
 export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeaders = request.headers.get("Cookie") || ""
   const [user, existingMatches] = await Promise.all([
@@ -20,12 +22,40 @@ export async function loader({ request }: Route.LoaderArgs) {
     (await existingMatches.json()) as MatchesDBResponse
   return {
     user,
-    matches: matchesData.data
+    matches: matchesData.data || []
   }
 }
 
 export default function History() {
   let ourMatches = useLoaderData<typeof loader>().matches
+  let [modeFilter, setFilter] = useState("All")
+  let [result, setResult] = useState("All")
+  let [currentPage, setCurrentPage] = useState(1)
+  let [searchValue, setSearchValue] = useState("")
+  let filteredMatches = ourMatches.filter((match) => {
+    const matchName = match.name || "Arena Match"
+    const matchesFilteredByMode =
+      modeFilter === "All" || match.mode === modeFilter.toLowerCase()
+    const matchesFilteredByResult =
+      result === "All" || match.result === result.toLowerCase()
+    const searchedMatches =
+      searchValue === "" ||
+      matchName.toLowerCase().includes(searchValue.toLowerCase())
+    return (
+      matchesFilteredByMode &&
+      matchesFilteredByResult &&
+      searchedMatches
+    )
+  })
+  let matchesPerPage = 3
+  let indexOfLastPage = matchesPerPage * currentPage
+  let indexOfFirstPage = indexOfLastPage - matchesPerPage
+  let currentItems = filteredMatches.slice(
+    indexOfFirstPage,
+    indexOfLastPage
+  )
+  let totalPages =
+    Math.ceil(filteredMatches.length / matchesPerPage) || 1
   return (
     <>
       <Navbar />
@@ -39,9 +69,80 @@ export default function History() {
               View your {ourMatches.length ?? 0} matches
             </span>
           </section>
-          {ourMatches.map((match) => {
+          <label
+            htmlFor="search"
+            className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 max-w-[400px] mb-3 mx-auto"
+          >
+            Search Match
+          </label>
+          <input
+            id="search"
+            type="text"
+            placeholder="Search battle city..."
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value)
+              setCurrentPage(1)
+            }}
+            className="w-full max-w-[400px] block mx-auto px-4 py-3 text-sm text-slate-100 bg-slate-900 border border-slate-800 rounded-xl placeholder-slate-500 outline-none transition-all focus:border-sky-400 focus:bg-slate-950 focus:ring-2 focus:ring-sky-400/15"
+          />
+          <SelectInput
+            label="Filter based on the gamemode"
+            filter={modeFilter}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setFilter(e.target.value)
+              setCurrentPage(1)
+            }}
+            options={["Advanced", "Classic", "All"]}
+          />
+          <SelectInput
+            label="Filter based on the result"
+            filter={result}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setResult(e.target.value)
+              setCurrentPage(1)
+            }}
+            options={["All", "Win", "Draw", "Loss"]}
+          />
+          <button
+            type="reset"
+            className="bg-gray-200 text-black font-medium hover:bg-gray-300 cursor-pointer block mx-auto hover:text-shadow-amber-50 duration-300 ease-in-out px-4 py-2 rounded"
+            onClick={() => {
+              setCurrentPage(1)
+              setFilter("All")
+              setResult("All")
+              setSearchValue("")
+            }}
+          >
+            Reset Form
+          </button>
+          {currentItems.map((match) => {
             return <MatchCard key={match._id} match={match} />
           })}
+          <section className="flex items-center justify-between mt-4 py-3">
+            <h3 className="text-white text-xl">
+              Showing {currentPage} of {totalPages}{" "}
+              {totalPages > 1 ? "pages" : "page"}
+            </h3>
+            <div className="flex justify-center gap-x-10">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                className="btn-prev"
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                className="btn-next"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                Next
+              </button>
+            </div>
+          </section>
         </div>
       </main>
     </>

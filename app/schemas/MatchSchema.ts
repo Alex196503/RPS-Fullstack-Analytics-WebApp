@@ -10,7 +10,8 @@ const matchSchema = new Schema(
     playerMove: { type: String, required: true },
     opponentMove: { type: String, required: true },
     result: { type: String, required: true },
-    mode: { type: String, required: true }
+    mode: { type: String, required: true },
+    name: { type: String }
   },
   { timestamps: true }
 )

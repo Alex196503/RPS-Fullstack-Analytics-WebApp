@@ -37,3 +37,25 @@ export const statusStyles = {
     bounceUserMove: ""
   }
 }
+
+//A collection of iconic historical cities used to dynamically generate unique names for each match location along with event prefixes.
+export const historicalCities = [
+  "Rome",
+  "Köln",
+  "Bucharest",
+  "Athens",
+  "Paris",
+  "London",
+  "Vienna",
+  "Berlin",
+  "Madrid",
+  "Tokyo",
+  "Cairo",
+  "Kyoto"
+]
+export const prefixes = [
+  "The Battle of",
+  "The Clash at",
+  "The Siege of",
+  "The Showdown in"
+]
