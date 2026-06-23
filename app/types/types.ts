@@ -154,8 +154,24 @@ export interface MatchesDBResponse {
     result: "win" | "loss" | "draw"
     mode: "classic" | "advanced"
     createdAt: string
+    name?: string
   }[]
 }
 
 //Indexed access type functionality from TypeScript used here!
 export type GameMatch = MatchesDBResponse["data"][number]
+
+export interface StatsResponse {
+  success: boolean
+  data: {
+    rank: string
+    emoji: string
+    badges: string[]
+    stats: {
+      totalGames: number
+      totalWins: number
+      advanced: number
+      classic: number
+    }
+  }
+}

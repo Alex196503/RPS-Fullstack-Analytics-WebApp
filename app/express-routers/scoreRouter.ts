@@ -3,6 +3,7 @@ import express, {
   type Request,
   type Response
 } from "express"
+import { historicalCities, prefixes } from "~/config/historyConfig"
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import { MatchModel } from "~/schemas/MatchSchema"
 import { UserModel } from "~/schemas/UserSchema"
@@ -79,12 +80,20 @@ scoreRouter.post(
       //This method commits the in-memory changes to MongoDB and sends all updated values to the DB in a single network request
       await userFound.save()
 
+      const prefixChosen =
+        prefixes[Math.floor(Math.random() * prefixes.length)]
+      const cityChosen =
+        historicalCities[
+          Math.floor(Math.random() * historicalCities.length)
+        ]
+
       const match = new MatchModel({
         user: id,
         playerMove,
         opponentMove,
         result,
-        mode: gamemode
+        mode: gamemode,
+        name: `${prefixChosen} ${cityChosen}`
       })
       await match.save()
       return res.status(200).json({

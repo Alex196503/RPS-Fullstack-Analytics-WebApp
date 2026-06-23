@@ -1,14 +1,23 @@
 import LogoBonus from "../../images/image-victor.jpg"
-import { Form, Link } from "react-router"
+import { Link, useLoaderData } from "react-router"
 import { defaultProfileBadges } from "~/config/profileConfig"
 import { ProfileBadgeList } from "./ProfileBadgesShowUp"
 import type { UserProps } from "~/types/types"
+import { type StatsResponse } from "~/types/types"
 export const ProfileViewContainer = ({
   data
 }: {
   data: UserProps
 }) => {
+  let loaderData = useLoaderData() as {
+    user: UserProps
+    stats: StatsResponse["data"] | null
+  }
   let { username, createdAt, avatar, email } = data
+  let serverStats = loaderData?.stats
+  let numberOfAdvancedGames = loaderData.stats?.stats.advanced
+  let numberOfClassicGames = loaderData.stats?.stats.classic
+  let totalWins = loaderData.stats?.stats.totalWins
   const handleDeleteProfile = async () => {
     let userConfirmation = window.confirm(
       "Are you sure you want to delete your profile? This action cannot be undone."
@@ -54,18 +63,43 @@ export const ProfileViewContainer = ({
         <h3 className="text-2xl font-bold tracking-wide mt-2">
           {username}
         </h3>
-        <span className="text-sm font-semibold uppercase tracking-wider text-blue-400 bg-blue-950/50 px-3 py-1 rounded-full border border-blue-900">
-          Advanced Strategist
-        </span>
+        {serverStats ? (
+          <span className="text-sm font-semibold uppercase tracking-wider text-amber-400 bg-amber-950/50 px-3 py-1 rounded-full border border-amber-900 flex items-center gap-x-1.5 animate-pulse">
+            <span>{serverStats.emoji}</span>
+            {serverStats.rank}
+          </span>
+        ) : (
+          <span className="text-xs text-gray-400">
+            No rank data available
+          </span>
+        )}
         <div className="flex gap-2 mt-2">
           {defaultProfileBadges.map((badge, index) => (
-            <ProfileBadgeList key={badge.name} badge={badge} />
+            <ProfileBadgeList
+              stats={
+                [
+                  numberOfAdvancedGames,
+                  numberOfClassicGames
+                ] as number[]
+              }
+              key={badge.name}
+              badge={badge}
+            />
           ))}
         </div>
-        <p className="text-xs font-bold text-gray-500 mt-5">
+        <div className="flex items-center gap-x-3 px-4 py-2 bg-slate-900/60 border border-slate-700/50 rounded-xl shadow-inner mt-2">
+          <span className="text-xl">🏆</span>
+          <h3 className="text-sm text-slate-300 font-semibold tracking-wide">
+            Total Wins:{" "}
+            <span className="text-base font-black text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
+              {totalWins}
+            </span>
+          </h3>
+        </div>
+        <p className="text-xs font-bold text-gray-500 mt-2">
           Email: {email}
         </p>
-        <p className="text-xs text-gray-400 mt-4 italic">
+        <p className="text-xs text-gray-400 mt-2 italic">
           Member since:{" "}
           {new Date(createdAt || Date.now()).toLocaleDateString(
             "ro-RO",
