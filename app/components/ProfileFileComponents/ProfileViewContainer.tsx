@@ -4,6 +4,8 @@ import { defaultProfileBadges } from "~/config/profileConfig"
 import { ProfileBadgeList } from "./ProfileBadgesShowUp"
 import type { UserProps } from "~/types/types"
 import { type StatsResponse } from "~/types/types"
+import { toast, ToastContainer } from "react-toastify"
+import { handleDeleteProfile } from "~/utils/frontend-boilerplate/profile-utils"
 export const ProfileViewContainer = ({
   data
 }: {
@@ -13,37 +15,38 @@ export const ProfileViewContainer = ({
     user: UserProps
     stats: StatsResponse["data"] | null
   }
-  let { username, createdAt, avatar, email } = data
+  let { username, createdAt, avatar, email, isVerified } = data
   let serverStats = loaderData?.stats
   let numberOfAdvancedGames = loaderData.stats?.stats.advanced
   let numberOfClassicGames = loaderData.stats?.stats.classic
   let totalWins = loaderData.stats?.stats.totalWins
-  const handleDeleteProfile = async () => {
-    let userConfirmation = window.confirm(
-      "Are you sure you want to delete your profile? This action cannot be undone."
-    )
-    if (userConfirmation) {
-      try {
-        const res = await fetch(
-          "http://localhost:5000/profile/delete",
-          {
-            method: "POST",
-            credentials: "include"
-          }
-        )
-        const data = (await res.json()) as {
-          success: boolean
-          message?: string
+
+  const sendMailValidation = async (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
+    e.preventDefault()
+    try {
+      const res = await fetch(
+        "http://localhost:5000/api/resend-verification",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include"
         }
-        if (data.success) {
-          window.location.href = "/login?deleted=true"
-        } else {
-          alert(data.message || "Failed to delete profile.")
-        }
-      } catch (err) {
-        console.error("Delete error:", err)
-        alert("Failed to connect to server")
+      )
+      const data = (await res.json()) as {
+        success: boolean
+        message: string
       }
+      if (res.ok && data.success) {
+        toast.success(data.message)
+      } else {
+        toast.error(`Something went wrong! ${data.message}`)
+      }
+    } catch (err) {
+      console.error("Error resending verification:", err)
     }
   }
   return (
@@ -63,6 +66,23 @@ export const ProfileViewContainer = ({
         <h3 className="text-2xl font-bold tracking-wide mt-2">
           {username}
         </h3>
+        {!isVerified && (
+          <section className="w-full mt-2 text-center flex flex-col items-center gap-y-1 bg-rose-950/40 border border-rose-900/50 p-3 rounded-lg">
+            <h3 className="text-sm font-semibold text-rose-400 flex items-center gap-x-1.5">
+              Account Not Fully Verified!
+            </h3>
+            <p className="text-xs text-gray-400 max-w-sm">
+              Some premium features like charts and CSV exports are
+              locked.
+            </p>
+            <a
+              onClick={sendMailValidation}
+              className="text-xs font-bold cursor cursor-pointer text-blue-400 hover:text-blue-300 underline mt-1 transition-colors"
+            >
+              Click here to check verification status or enter token
+            </a>
+          </section>
+        )}
         {serverStats ? (
           <span className="text-sm font-semibold uppercase tracking-wider text-amber-400 bg-amber-950/50 px-3 py-1 rounded-full border border-amber-900 flex items-center gap-x-1.5 animate-pulse">
             <span>{serverStats.emoji}</span>
@@ -84,6 +104,7 @@ export const ProfileViewContainer = ({
               }
               key={badge.name}
               badge={badge}
+              isVerified={isVerified as boolean}
             />
           ))}
         </div>
@@ -126,6 +147,7 @@ export const ProfileViewContainer = ({
             Delete your profile{" "}
           </button>
         </div>
+        <ToastContainer position="top-right" autoClose={3000} />
       </section>
     </>
   )

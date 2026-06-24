@@ -100,6 +100,7 @@ export type UserProps = {
   email: string
   avatar: string
   createdAt?: string
+  isVerified?: boolean
 }
 
 export type User = Pick<
