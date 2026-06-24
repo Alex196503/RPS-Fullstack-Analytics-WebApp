@@ -3,15 +3,21 @@ import express, {
   type Request,
   type Response
 } from "express"
-import jsonwebtoken from "jsonwebtoken"
 import { UserModel } from "../schemas/UserSchema"
+import crypto from "crypto"
 import {
   FileValidationSchema,
-  LoginSchema,
   RegisterSchema
 } from "../utils/zod-validation"
 import multer from "multer"
 import bcrypt from "bcrypt"
+import sendEmailNotification from "~/utils/backend-boilerplate/nodemailer-config"
+import { authentificationMiddleware } from "~/middlewares/authMiddleware"
+import {
+  resendVerificationEmail,
+  verifyEmail
+} from "~/express-controllers/EmailVerificationController"
+import { authenticate } from "~/express-controllers/AuthController"
 const upload = multer({ dest: "app/uploads/" })
 export const authRouter = express.Router()
 
@@ -28,7 +34,7 @@ authRouter.post(
       }
       const result = RegisterSchema.safeParse(req.body)
       const fileResult = FileValidationSchema.safeParse(req.file)
-
+      const verificationToken = crypto.randomBytes(32).toString("hex")
       if (!result.success) {
         return res.status(400).json({
           success: false,
@@ -63,9 +69,15 @@ authRouter.post(
         email,
         password: bcryptedPassword,
         avatar: fileData.filename,
-        username
+        username,
+        verificationToken,
+        verificationTokenExpiresAt: new Date(
+          Date.now() + 24 * 60 * 60 * 1000
+        )
       })
       await user.save()
+      let text = `Hello! Please click the link to validate your email: ${process.env.VALIDATION_LINK}?token=${verificationToken}`
+      await sendEmailNotification(email, "Email validation", text)
       return res.status(201).json({
         message: "User registered successfully!",
         success: true,
@@ -83,65 +95,15 @@ authRouter.post(
   }
 )
 
+// Route to authenticate the user and establish a session cookie
+authRouter.post("/login", authenticate)
+
+// Route to handle email verification via token sent from the loader
+authRouter.post("/verify-email", verifyEmail)
+
+// Route for authenticated users to request a new email verification token
 authRouter.post(
-  "/login",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const resultLogin = LoginSchema.safeParse(req.body)
-      if (!resultLogin.success) {
-        return res.status(400).json({
-          success: false,
-          errors: resultLogin.error.format()
-        })
-      }
-      const userLoginData = resultLogin.data
-      const { email, password } = userLoginData
-      let foundUser = await UserModel.findOne({ email: email })
-      if (!foundUser) {
-        return res
-          .status(404)
-          .json({ message: "User not found!", success: false })
-      }
-      let result = await bcrypt.compare(password, foundUser.password)
-      if (!result) {
-        return res.status(401).json({
-          message: "Invalid email or password!",
-          success: false
-        })
-      }
-      let secret_key = process.env.JWT_SECRET
-      if (!secret_key) {
-        return next(
-          new Error(
-            "JWT secret key is not defined in environment variables"
-          )
-        )
-      }
-      const jwt_data = jsonwebtoken.sign(
-        { user_id: foundUser._id },
-        secret_key,
-        { expiresIn: "1h" }
-      )
-      // Set the JWT token in an HTTP-only cookie
-      res.cookie("token", jwt_data, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 3600000
-      })
-      return res.status(200).json({
-        message: "Login succesful",
-        success: true,
-        token: jwt_data,
-        user: {
-          id: foundUser._id,
-          username: foundUser.username,
-          email: foundUser.email,
-          avatar: foundUser.avatar
-        }
-      })
-    } catch (err) {
-      next(err)
-    }
-  }
+  "/resend-verification",
+  authentificationMiddleware,
+  resendVerificationEmail
 )

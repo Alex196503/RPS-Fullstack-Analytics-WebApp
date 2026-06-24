@@ -106,6 +106,7 @@ export const fetchUserData = async (request: Request) => {
       username: string
       avatar: string
       email?: string
+      isVerified?: boolean
     }
   }
   return serverResponse.data

@@ -29,7 +29,8 @@ profileRouter.get(
         username: userFound.username,
         email: userFound.email,
         avatar: userFound.avatar,
-        createdAt: userFound.createdAt || Date.now()
+        createdAt: userFound.createdAt || Date.now(),
+        isVerified: userFound.isVerified
       }
       return res
         .status(200)

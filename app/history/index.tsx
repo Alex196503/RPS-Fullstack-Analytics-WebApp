@@ -6,6 +6,7 @@ import { useLoaderData } from "react-router"
 import React, { useState } from "react"
 import MatchCard from "~/components/HistoryComponents/MatchCard"
 import { SelectInput } from "~/components/HistoryComponents/SelectInput"
+import { SearchBar } from "~/components/HistoryComponents/SearchBar"
 export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeaders = request.headers.get("Cookie") || ""
   const [user, existingMatches] = await Promise.all([
@@ -69,27 +70,18 @@ export default function History() {
               View your {ourMatches.length ?? 0} matches
             </span>
           </section>
-          <label
-            htmlFor="search"
-            className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2 max-w-[400px] mb-3 mx-auto"
-          >
-            Search Match
-          </label>
-          <input
-            id="search"
-            type="text"
-            placeholder="Search battle city..."
+          <SearchBar
+            label="Search for a match..."
             value={searchValue}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setSearchValue(e.target.value)
               setCurrentPage(1)
             }}
-            className="w-full max-w-[400px] block mx-auto px-4 py-3 text-sm text-slate-100 bg-slate-900 border border-slate-800 rounded-xl placeholder-slate-500 outline-none transition-all focus:border-sky-400 focus:bg-slate-950 focus:ring-2 focus:ring-sky-400/15"
           />
           <SelectInput
             label="Filter based on the gamemode"
             filter={modeFilter}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            onChange={(e) => {
               setFilter(e.target.value)
               setCurrentPage(1)
             }}

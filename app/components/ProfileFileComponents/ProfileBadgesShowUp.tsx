@@ -2,13 +2,18 @@ import type { ProfileBadgeProps } from "~/types/types"
 
 export const ProfileBadgeList = ({
   badge,
-  stats
+  stats,
+  isVerified
 }: {
   badge: ProfileBadgeProps
   stats: number[]
+  isVerified: boolean
 }) => {
   const isClassic = badge.name.toLowerCase().includes("classic")
   const isAdvanced = badge.name.toLowerCase().includes("advanced")
+  const isVerifiedBadge = badge.name
+    .toLowerCase()
+    .includes("verified")
   let [numberOfAdvancedGames, numberOfClassicGames] = stats
   return (
     <span
@@ -27,6 +32,7 @@ export const ProfileBadgeList = ({
           ({numberOfAdvancedGames} matches)
         </span>
       )}
+      {isVerifiedBadge && <span>{isVerified ? "✅" : "❌"}</span>}
     </span>
   )
 }

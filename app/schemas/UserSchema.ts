@@ -6,6 +6,9 @@ const userSchema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     avatar: { type: String, required: true },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String },
+    verificationTokenExpiresAt: { type: Date },
     classicScore: {
       wins: { type: Number, default: 0, min: 0 },
       losses: { type: Number, default: 0, min: 0 },
