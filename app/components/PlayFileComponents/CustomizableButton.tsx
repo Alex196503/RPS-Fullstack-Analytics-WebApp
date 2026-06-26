@@ -1,4 +1,4 @@
-import type { ButtonProps } from "~/types/types"
+import type { ButtonProps } from "../../types/layout-types"
 
 export const MenuButton = ({
   name,

@@ -1,4 +1,4 @@
-import type { GameDuelProps } from "~/types/types"
+import { type GameDuelProps } from "~/types/game-types"
 import { GameBadge } from "./GameBadge"
 import { GameBadges, gameFunctions } from "~/config/gameConfig"
 import { motion } from "framer-motion"
@@ -39,10 +39,9 @@ export const GameDuel = ({
         body: JSON.stringify({
           outcome: cleanOutcome,
           gamemode: menu,
-          playerMove:choice.toLowerCase(),
-          opponentMove:HouseChoiceMessage,
-          result:cleanOutcome
-
+          playerMove: choice.toLowerCase(),
+          opponentMove: HouseChoiceMessage,
+          result: cleanOutcome
         })
       })
         .then((res) => {

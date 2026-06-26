@@ -6,7 +6,10 @@ import type { Route } from "./+types"
 import { redirect } from "react-router"
 
 import { fetchAuthenticationApi } from "~/utils/frontend-boilerplate/frontend-functions"
-import { redirectIfAuthenticated, validateFrontendLogin } from "~/utils/frontend-boilerplate/auth-utils"
+import {
+  redirectIfAuthenticated,
+  validateFrontendLogin
+} from "~/utils/frontend-boilerplate/auth-utils"
 export async function loader({ request }: Route.ActionArgs) {
   //Calling the function which checks if the users are logged in or not
   return redirectIfAuthenticated(request)
@@ -117,6 +120,14 @@ export default function LoginPage({
             className="font-medium text-blue-400 hover:text-blue-300 transition-colors underline underline-offset-4"
           >
             Register a new account
+          </Link>
+        </p>
+        <p className="text-center text-sm text-gray-200 mt-4">
+          <Link
+            to="/forgot-password"
+            className="font-medium text-blue-300 hover:text-blue-700 cursor-pointer transition-colors duration-300"
+          >
+            Forgot password? Reset it
           </Link>
         </p>
       </div>

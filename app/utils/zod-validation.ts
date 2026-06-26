@@ -79,4 +79,22 @@ export const EditProfileSchema = z.object({
     .or(z.literal(""))
 })
 
+//Password Reset schema that ensures both fields(password and confirm password) respect our validation schema
+export const PasswordResetSchema = z
+  .object({
+    password: z
+      .string("The password is required")
+      .min(6, "Password must be at least 6 characters long")
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
+        "Password must contain at least one letter and one number"
+      ),
+    confirmPassword: z.string("Confirm password is required")
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"]
+  })
+
 export type EditProfileInput = z.infer<typeof EditProfileSchema>
+export type PasswordResetInput = z.infer<typeof PasswordResetSchema>

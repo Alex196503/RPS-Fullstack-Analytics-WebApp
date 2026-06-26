@@ -5,7 +5,7 @@ import { ModalRules } from "../components/PlayFileComponents/ModalRules"
 import { useState } from "react"
 import { GameDuel } from "~/components/PlayFileComponents/GameDuel"
 import { useOutletContext } from "react-router"
-import type { GameOutletContextProps } from "~/types/types"
+import type { GameOutletContextProps } from "../types/layout-types"
 import { motion } from "motion/react"
 import useMenuResponsiveClose, {
   useRandomDelayedIndex

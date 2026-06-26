@@ -5,7 +5,7 @@ import express, {
 } from "express"
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import { MatchModel } from "~/schemas/MatchSchema"
-import type { StatsResponse } from "~/types/types"
+import { type StatsResponse } from "~/types/game-types"
 export const matchRouter = express.Router()
 
 //Route that queries the database to select the existing matches of the current user that is logged in

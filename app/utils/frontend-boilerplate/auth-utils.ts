@@ -8,7 +8,8 @@ export const validateFrontendRegistration = (
   avatarFile: File | null,
   confirmPassword: string
 ) => {
-  const errors: Record<string, { _errors: string[] }> = {}
+  const errors =
+    validatePasswordMatch(password, confirmPassword) || {}
   if (!email) {
     errors.email = { _errors: ["Email is required"] }
   } else if (
@@ -29,18 +30,6 @@ export const validateFrontendRegistration = (
     errors.avatar = {
       _errors: ["Avatar file size must be less than 5MB"]
     }
-  }
-  if (!password) {
-    errors.password = { _errors: ["Password is required"] }
-  } else if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password)) {
-    errors.password = {
-      _errors: [
-        "Password must be at least 6 characters long and contain both letters and numbers."
-      ]
-    }
-  }
-  if (password !== confirmPassword) {
-    errors.confirmPassword = { _errors: ["Passwords do not match"] }
   }
   return Object.keys(errors).length > 0 ? errors : null
 }
@@ -110,4 +99,25 @@ export const fetchUserData = async (request: Request) => {
     }
   }
   return serverResponse.data
+}
+
+// This function validates the password complexity and matching criteria on the frontend before submission.
+export const validatePasswordMatch = (
+  password: string,
+  confirmPassword: string
+) => {
+  const errors: Record<string, { _errors: string[] }> = {}
+  if (!password) {
+    errors.password = { _errors: ["Password is required"] }
+  } else if (!/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(password)) {
+    errors.password = {
+      _errors: [
+        "Password must be at least 6 characters long and contain both letters and numbers."
+      ]
+    }
+  }
+  if (password !== confirmPassword) {
+    errors.confirmPassword = { _errors: ["Passwords do not match"] }
+  }
+  return errors
 }

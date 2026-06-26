@@ -18,7 +18,7 @@ export function parseGameOutcome(message: string) {
 //This function is a utility for making API calls to the authentication server. It takes the API endpoint, a redirect link, and the payload (form data) as arguments. It handles the fetch request and returns a standardized response object indicating success or failure, along with any error messages or data returned from the server.
 export async function fetchAuthenticationApi(
   link: string,
-  payload: FormData | Record<string, string>
+  payload: FormData | Record<string, string> | string
 ) {
   try {
     let req = await fetch(link, {

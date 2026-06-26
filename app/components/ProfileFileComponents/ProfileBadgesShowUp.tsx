@@ -1,4 +1,4 @@
-import type { ProfileBadgeProps } from "~/types/types"
+import type { ProfileBadgeProps } from "../../types/layout-types"
 
 export const ProfileBadgeList = ({
   badge,

@@ -1,5 +1,5 @@
 //Profile configuration status(ranks, badges,etc)
-import { type ProfileBadgeProps } from "~/types/types"
+import { type ProfileBadgeProps } from "../types/layout-types"
 export const defaultProfileBadges: ProfileBadgeProps[] = [
   {
     name: "Classic Mode",

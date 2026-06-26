@@ -1,4 +1,4 @@
-import type { ParameterContainerProps } from "~/types/types"
+import type { ParameterContainerProps } from "../../types/layout-types"
 
 export const ScoreContainer = ({
   title = "Score",

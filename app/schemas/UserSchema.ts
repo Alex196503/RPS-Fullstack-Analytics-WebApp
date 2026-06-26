@@ -7,8 +7,10 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     avatar: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
+    passwordResetToken: { type: String },
+    passwordResetTokenExpiresAt: { type: Number },
     verificationToken: { type: String },
-    verificationTokenExpiresAt: { type: Date },
+    verificationTokenExpiresAt: { type: Number },
     classicScore: {
       wins: { type: Number, default: 0, min: 0 },
       losses: { type: Number, default: 0, min: 0 },

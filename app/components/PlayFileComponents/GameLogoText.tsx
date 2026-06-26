@@ -1,4 +1,4 @@
-import type { TitleComponentsProps } from "~/types/types"
+import type { TitleComponentsProps } from "../../types/layout-types"
 
 export const TitleComponents = ({
   components
