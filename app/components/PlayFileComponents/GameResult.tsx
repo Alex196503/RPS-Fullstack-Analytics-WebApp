@@ -1,7 +1,4 @@
-import {
-  type ContextResetProps,
-  type GameResultContainerProps
-} from "~/types/types"
+import { type GameResultContainerProps } from "~/types/game-types"
 import { useResetContext, useResultGame } from "~/utils/custom-hooks"
 
 export const GameResult = ({
@@ -18,7 +15,7 @@ export const GameResult = ({
   const resetGame = () => {
     setChoice("")
     setHouseChoice(null)
-    setMessage("");
+    setMessage("")
   }
   return (
     <div className="flex flex-col w-full items-center px-4 py-5 mt-2 order-3 md:order-none">

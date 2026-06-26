@@ -4,8 +4,7 @@ import { Outlet, useLocation } from "react-router"
 import { gameFunctions } from "~/config/gameConfig"
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
-import type { ScoreDBResponse } from "~/types/types"
-
+import type { ScoreDBResponse } from "~/types/game-types"
 //Dynamic loader that extracts user score from the DB, identifying the game mode based on the current URL
 export async function loader({ request }: Route.LoaderArgs) {
   const cookieHeaders = request.headers.get("Cookie") || ""

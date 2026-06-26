@@ -1,4 +1,4 @@
-import { type GameMatch } from "~/types/types"
+import type { GameMatch } from "~/types/game-types"
 import { moveEmojis } from "~/config/historyConfig"
 import { statusStyles } from "~/config/historyConfig"
 export default function MatchCard({ match }: { match: GameMatch }) {

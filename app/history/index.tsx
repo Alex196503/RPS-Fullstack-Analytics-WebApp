@@ -1,7 +1,7 @@
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
 import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
-import type { MatchesDBResponse } from "~/types/types"
+import type{ MatchesDBResponse } from "~/types/game-types"
 import { useLoaderData } from "react-router"
 import React, { useState } from "react"
 import MatchCard from "~/components/HistoryComponents/MatchCard"

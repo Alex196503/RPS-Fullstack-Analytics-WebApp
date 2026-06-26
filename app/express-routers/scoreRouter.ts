@@ -7,7 +7,7 @@ import { historicalCities, prefixes } from "~/config/historyConfig"
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import { MatchModel } from "~/schemas/MatchSchema"
 import { UserModel } from "~/schemas/UserSchema"
-import type { ScoreReqBody } from "~/types/types"
+import type{ ScoreReqBody } from "~/types/game-types"
 import { updateModeScore } from "~/utils/backend-boilerplate/backend-functions"
 export const scoreRouter = express.Router()
 

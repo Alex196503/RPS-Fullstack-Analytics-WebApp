@@ -1,5 +1,5 @@
 import { NavLink } from "react-router"
-import type { NavLinks } from "~/types/types"
+import type { NavLinks } from "../../types/layout-types"
 
 export const NavBarLinks = ({
   links,

@@ -53,7 +53,7 @@ export default function RegisterPage({
   actionData
 }: Route.ComponentProps) {
   return (
-    <div className="h-auto md:min-h-screen flex items-center justify-center bg-gray-950 px-4 py-6 sm:py-16">
+    <div className="register-container">
       <div className="w-full max-w-md space-y-6 bg-gray-900 p-5 sm:p-8 rounded-xl border border-gray-800 shadow-2xl text-white">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
@@ -158,7 +158,7 @@ export default function RegisterPage({
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 active:scale-[0.98] text-sm font-bold uppercase tracking-wider rounded-md shadow-lg transition-all duration-150"
+              className="btn-submit"
             >
               Register Now
             </button>

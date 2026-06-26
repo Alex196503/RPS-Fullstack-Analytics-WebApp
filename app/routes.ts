@@ -13,6 +13,8 @@ export default [
   route("/profile", "./edit-profile/index.tsx"),
   route("/history", "./history/index.tsx"),
   route("/verify-email", "./verify-email/index.tsx"),
+  route("/forgot-password", "./forgot-password-page/index.tsx"),
+  route("/reset-password", "./reset-password-page/index.tsx"),
   layout("./layouts/HeaderLayout.tsx", [
     layout("./layouts/FooterLayout.tsx", [
       route("play/classic", "./custom-game/index.tsx"),

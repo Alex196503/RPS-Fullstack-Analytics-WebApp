@@ -1,4 +1,4 @@
-import type { GameBadgeProps } from "~/types/types"
+import { type GameBadgeProps } from "~/types/game-types"
 
 export const GameBadge = ({
   item,

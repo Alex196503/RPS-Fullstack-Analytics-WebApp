@@ -7,6 +7,7 @@ import { UserModel } from "../schemas/UserSchema"
 import crypto from "crypto"
 import {
   FileValidationSchema,
+  PasswordResetSchema,
   RegisterSchema
 } from "../utils/zod-validation"
 import multer from "multer"
@@ -18,6 +19,10 @@ import {
   verifyEmail
 } from "~/express-controllers/EmailVerificationController"
 import { authenticate } from "~/express-controllers/AuthController"
+import {
+  requestPasswordReset,
+  resetPassword
+} from "~/express-controllers/IdentityController"
 const upload = multer({ dest: "app/uploads/" })
 export const authRouter = express.Router()
 
@@ -107,3 +112,9 @@ authRouter.post(
   authentificationMiddleware,
   resendVerificationEmail
 )
+
+// Route that handles password reset requests by invoking the requestPasswordReset controller method
+authRouter.post("/forgot-password", requestPasswordReset)
+
+// Route that handles the password reset form submission and forwards the payload to the controller for secure validation
+authRouter.post("/reset-password", resetPassword)

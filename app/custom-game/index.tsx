@@ -7,7 +7,7 @@ import useMenuResponsiveClose, {
   useRandomDelayedIndex
 } from "../utils/custom-hooks"
 import { useOutletContext } from "react-router"
-import type { GameOutletContextProps } from "~/types/types"
+import type { GameOutletContextProps } from "../types/layout-types"
 import { useState } from "react"
 import { GameDuel } from "~/components/PlayFileComponents/GameDuel"
 import { motion } from "motion/react"

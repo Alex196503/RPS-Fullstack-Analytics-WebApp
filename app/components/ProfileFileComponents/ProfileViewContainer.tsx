@@ -2,8 +2,8 @@ import LogoBonus from "../../images/image-victor.jpg"
 import { Link, useLoaderData } from "react-router"
 import { defaultProfileBadges } from "~/config/profileConfig"
 import { ProfileBadgeList } from "./ProfileBadgesShowUp"
-import type { UserProps } from "~/types/types"
-import { type StatsResponse } from "~/types/types"
+import type { UserProps } from "../../types/auth-user-types"
+import { type StatsResponse } from "~/types/game-types"
 import { toast, ToastContainer } from "react-toastify"
 import { handleDeleteProfile } from "~/utils/frontend-boilerplate/profile-utils"
 export const ProfileViewContainer = ({
@@ -79,7 +79,8 @@ export const ProfileViewContainer = ({
               onClick={sendMailValidation}
               className="text-xs font-bold cursor cursor-pointer text-blue-400 hover:text-blue-300 underline mt-1 transition-colors"
             >
-              Click here to check verification status or enter token
+              Check your mail for a validation link or click here to
+              recieve another one
             </a>
           </section>
         )}

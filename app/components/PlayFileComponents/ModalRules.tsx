@@ -1,7 +1,7 @@
 import IconClose from "../../images/icon-close.svg"
 import { SVGModalImage } from "~/components/PlayFileComponents/SVGModalImageClassic"
 import { SVGModalImageAdvanced } from "./SVGModalImageAdvanced"
-import type { ModalProps } from "~/types/types"
+import type { ModalProps } from "../../types/layout-types"
 
 export const ModalRules = ({
   name,

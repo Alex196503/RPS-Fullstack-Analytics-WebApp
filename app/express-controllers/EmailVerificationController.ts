@@ -22,22 +22,13 @@ export const verifyEmail = async (
       })
     }
     const userFound = await UserModel.findOne({
-      verificationToken: token
+      verificationToken: token,
+      verificationTokenExpiresAt: { $gt: Date.now() }
     })
     if (!userFound) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "User not found with that token or link expired",
         success: false
-      })
-    }
-    if (
-      userFound.verificationTokenExpiresAt &&
-      Date.now() > userFound.verificationTokenExpiresAt.getTime()
-    ) {
-      return res.status(410).json({
-        success: false,
-        message:
-          "The verification link has expired. Please request a new one."
       })
     }
     userFound.isVerified = true
@@ -79,9 +70,8 @@ export const resendVerificationEmail = async (
     userFound.verificationToken = crypto
       .randomBytes(32)
       .toString("hex")
-    userFound.verificationTokenExpiresAt = new Date(
-      Date.now() + 24 * 60 * 60 * 1000
-    )
+    userFound.verificationTokenExpiresAt =
+      Date.now() + 1 * 60 * 60 * 1000
     await userFound.save()
     let text = `Hello! Here is your new verification link: ${process.env.VALIDATION_LINK}?token=${userFound.verificationToken}`
     await sendEmailNotification(

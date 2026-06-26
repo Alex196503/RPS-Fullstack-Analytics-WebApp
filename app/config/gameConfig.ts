@@ -1,6 +1,7 @@
 // Global game configuration constants (move names, variations, and game data, links)
 // Used across layouts and pages to maintain a single source of truth.
-import { type BadgeData, type NavLinks } from "../types/types"
+import { type NavLinks } from "../types/layout-types"
+import type { BadgeData } from "~/types/game-types"
 export let gameFunctions: string[] = [
   "Paper",
   "Scissors",

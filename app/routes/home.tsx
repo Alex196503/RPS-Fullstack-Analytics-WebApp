@@ -1,7 +1,8 @@
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
 import { ProfileViewContainer } from "~/components/ProfileFileComponents/ProfileViewContainer"
-import type { StatsResponse, UserProps } from "~/types/types"
+import type { StatsResponse } from "~/types/game-types"
+import { type UserProps } from "~/types/auth-user-types"
 import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 
 export function meta({}: Route.MetaArgs) {
