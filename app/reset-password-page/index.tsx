@@ -33,7 +33,7 @@ export async function action({ request }: Route.ActionArgs) {
     const objectPayload = Object.fromEntries(
       formData.entries()
     ) as Record<string, string>
-    objectPayload.token = token;
+    objectPayload.token = token
     let req = await fetchAuthenticationApi(
       "http://localhost:5000/api/reset-password",
       objectPayload
@@ -143,7 +143,7 @@ export default function ResetPasswordPage() {
         </Form>
         <section className="flex items-center justify-center mt-2">
           <Link
-            to="/register"
+            to="/login"
             className="font-medium text-cyan-500 hover:text-cyan-300 duration-300 ease-in-out transition-colors underline underline-offset-4"
           >
             Go back

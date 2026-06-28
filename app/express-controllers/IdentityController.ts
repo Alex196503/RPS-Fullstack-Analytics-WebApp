@@ -6,18 +6,18 @@ import express, {
 import { UserModel } from "~/schemas/UserSchema"
 import sendEmailNotification from "~/utils/backend-boilerplate/nodemailer-config"
 import crypto from "crypto"
-import { PasswordResetSchema } from "~/utils/zod-validation"
+import { PasswordResetSchema } from "~/utils/zod-schemas/zod-validation"
 import bcrypt from "bcrypt"
 
 //Method that initiates the password reset process by generating a reset token, inserting it into the database, and sending an email.
 export const requestPasswordReset = async (
-  req: Request,
+  req: Request<{}, {}, { identity: string }>,
   res: Response,
   next: NextFunction
 ) => {
-  let resetField = req.body.identity as string
+  let { identity } = req.body
   try {
-    if (!resetField) {
+    if (!identity) {
       return res.status(400).json({
         success: false,
         errors: {
@@ -27,10 +27,10 @@ export const requestPasswordReset = async (
       })
     }
     let userFound = null
-    if (resetField.includes("@")) {
-      userFound = await UserModel.findOne({ email: resetField })
+    if (identity.includes("@")) {
+      userFound = await UserModel.findOne({ email: identity })
     } else {
-      userFound = await UserModel.findOne({ username: resetField })
+      userFound = await UserModel.findOne({ username: identity })
     }
     if (!userFound) {
       return res.status(404).json({

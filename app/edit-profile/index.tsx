@@ -15,6 +15,15 @@ import {
   handleAvatarChange,
   hasNoProfileChanges
 } from "~/utils/frontend-boilerplate/profile-utils"
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Edit profile page" },
+    {
+      name: "description",
+      content: "Welcome to your edit profile page"
+    }
+  ]
+}
 export async function loader({ request }: { request: Request }) {
   return await fetchUserData(request)
 }

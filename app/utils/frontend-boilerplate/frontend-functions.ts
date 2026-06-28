@@ -1,3 +1,6 @@
+import { redirect } from "react-router"
+import { fetchUserData } from "./auth-utils"
+import { type MatchesDBResponse } from "~/types/game-types"
 //Parses a raw game message to extract a standardized outcome ('win', 'loss', or 'draw').
 export function parseGameOutcome(message: string) {
   let cleanOutcome = ""
@@ -54,5 +57,44 @@ export async function fetchAuthenticationApi(
         global: "Could not connect to the authentication server."
       }
     }
+  }
+}
+//Fetches all necessary data for the History page in parallel and validates user authentication and extracts any download error params from the URL.
+export async function fetchHistoryPageData(request: Request) {
+  const cookieHeaders = request.headers.get("Cookie") || ""
+  const url = new URL(request.url)
+  const errorParams = url.searchParams.get("error") || ""
+  const [user, existingMatches] = await Promise.all([
+    fetchUserData(request),
+    fetch("http://localhost:5000/match", {
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieHeaders
+      },
+      credentials: "include"
+    })
+  ])
+  if (
+    user instanceof Response &&
+    (user.status === 302 || user.status === 303)
+  ) {
+    throw redirect("/login")
+  }
+  if (
+    existingMatches.status === 302 ||
+    existingMatches.status === 401
+  ) {
+    throw redirect("/login")
+  }
+  const matchesData =
+    (await existingMatches.json()) as MatchesDBResponse
+
+  return {
+    user,
+    matches: matchesData.data || [],
+    errorMessage:
+      errorParams === "no_matches"
+        ? "No matches found to download the CSV file"
+        : null
   }
 }

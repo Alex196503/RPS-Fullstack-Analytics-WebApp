@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react"
 import { gameRules } from "~/config/gameConfig"
-import { resetContext } from "./context"
-import { ToggleThemeContext } from "./context"
+import { resetContext } from "../react-context/context"
+import { ToggleThemeContext } from "../react-context/context"
 // Custom hook to close the menu when the window is resized above a certain width e.g. 750px
 export default function useMenuResponsiveClose(
   isMenuOpen: boolean,
@@ -79,6 +79,7 @@ export function useResetContext() {
   return context
 }
 
+//Custom hook to consume the theme context
 export function useThemeContext() {
   const context = useContext(ToggleThemeContext)
   if (!context) {

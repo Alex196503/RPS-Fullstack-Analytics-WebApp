@@ -4,13 +4,15 @@ import express, {
   type Response
 } from "express"
 import { UserModel } from "~/schemas/UserSchema"
-import { LoginSchema } from "~/utils/zod-validation"
+import { LoginSchema } from "~/utils/zod-schemas/zod-validation"
 import bcrypt from "bcrypt"
 import jsonwebtoken from "jsonwebtoken"
+import type z from "zod"
 
 //Validates user credentials, signs a JWT token, and sets the authentication cookie
+type LoginInput = z.infer<typeof LoginSchema>
 export const authenticate = async (
-  req: Request,
+  req: Request<{}, {}, LoginInput>,
   res: Response,
   next: NextFunction
 ) => {

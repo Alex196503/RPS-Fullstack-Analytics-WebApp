@@ -5,13 +5,13 @@ import { GameBadges } from "~/config/gameConfig"
 import { ModalRules } from "../components/PlayFileComponents/ModalRules"
 import useMenuResponsiveClose, {
   useRandomDelayedIndex
-} from "../utils/custom-hooks"
+} from "../utils/react-custom-hooks/custom-hooks"
 import { useOutletContext } from "react-router"
 import type { GameOutletContextProps } from "../types/layout-types"
 import { useState } from "react"
 import { GameDuel } from "~/components/PlayFileComponents/GameDuel"
 import { motion } from "motion/react"
-import { resetContext } from "~/utils/context"
+import { resetContext } from "~/utils/react-context/context"
 import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 export function meta({}: Route.MetaArgs) {
   return [
