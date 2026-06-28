@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root"
 import "./app.css"
-import { ToggleThemeContext } from "../app/utils/context"
+import { ToggleThemeContext } from "./utils/react-context/context"
 import { useState } from "react"
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

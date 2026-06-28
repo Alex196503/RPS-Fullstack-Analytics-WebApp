@@ -1,34 +1,52 @@
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
 import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
-import type{ MatchesDBResponse } from "~/types/game-types"
-import { useLoaderData } from "react-router"
-import React, { useState } from "react"
+import type { MatchesDBResponse } from "~/types/game-types"
+import { redirect, useLoaderData } from "react-router"
+import React, { useEffect, useState } from "react"
 import MatchCard from "~/components/HistoryComponents/MatchCard"
 import { SelectInput } from "~/components/HistoryComponents/SelectInput"
 import { SearchBar } from "~/components/HistoryComponents/SearchBar"
+import type { UserLoaderSuccess } from "~/types/auth-user-types"
+import { toast, ToastContainer } from "react-toastify"
+import { fetchHistoryPageData } from "~/utils/frontend-boilerplate/frontend-functions"
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "History & Stats page" },
+    {
+      name: "description",
+      content: "Welcome to your history page & stats"
+    }
+  ]
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
-  const cookieHeaders = request.headers.get("Cookie") || ""
-  const [user, existingMatches] = await Promise.all([
-    fetchUserData(request),
-    fetch("http://localhost:5000/match", {
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieHeaders
-      },
-      credentials: "include"
-    })
-  ])
-  const matchesData =
-    (await existingMatches.json()) as MatchesDBResponse
-  return {
-    user,
-    matches: matchesData.data || []
-  }
+  return await fetchHistoryPageData(request)
 }
 
 export default function History() {
   let ourMatches = useLoaderData<typeof loader>().matches
+  let message = useLoaderData<typeof loader>().errorMessage
+
+  useEffect(() => {
+    if (!message) return
+    toast.error(message)
+
+    // Clear error query param from URL without reloading the page (params: stateObj, title, url)
+    if (typeof window !== "undefined") {
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      )
+    }
+  }, [message])
+
+  const ourLoaderData = useLoaderData<
+    typeof loader
+  >() as UserLoaderSuccess
+  const isUserVerified = ourLoaderData.user?.isVerified
   let [modeFilter, setFilter] = useState("All")
   let [result, setResult] = useState("All")
   let [currentPage, setCurrentPage] = useState(1)
@@ -66,6 +84,14 @@ export default function History() {
             <h1 className="text-2xl font-bold tracking-wide">
               Match History
             </h1>
+            {isUserVerified && (
+              <a
+                href="http://localhost:5000/match/export"
+                className="text-white bg-green-500 box-border border border-transparent hover:bg-green-700 shadow-xs font-medium leading-5 rounded-xl text-xl px-4 py-2.5 focus:outline-none ease-in-out duration-300 cursor-pointer"
+              >
+                Export CSV
+              </a>
+            )}
             <span className="text-sm text-slate-400">
               View your {ourMatches.length ?? 0} matches
             </span>
@@ -136,6 +162,7 @@ export default function History() {
             </div>
           </section>
         </div>
+        <ToastContainer position="top-right" autoClose={5000} />
       </main>
     </>
   )

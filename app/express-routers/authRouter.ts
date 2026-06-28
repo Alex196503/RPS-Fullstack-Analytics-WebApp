@@ -9,7 +9,7 @@ import {
   FileValidationSchema,
   PasswordResetSchema,
   RegisterSchema
-} from "../utils/zod-validation"
+} from "../utils/zod-schemas/zod-validation"
 import multer from "multer"
 import bcrypt from "bcrypt"
 import sendEmailNotification from "~/utils/backend-boilerplate/nodemailer-config"
@@ -23,14 +23,20 @@ import {
   requestPasswordReset,
   resetPassword
 } from "~/express-controllers/IdentityController"
+import type z from "zod"
 const upload = multer({ dest: "app/uploads/" })
 export const authRouter = express.Router()
 
+type RegisterInput = z.infer<typeof RegisterSchema>
 //The register route that performs and validates our register based on our zod validation schema
 authRouter.post(
   "/register",
   upload.single("avatar"),
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (
+    req: Request<{}, {}, RegisterInput>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       if (!req.file) {
         return res

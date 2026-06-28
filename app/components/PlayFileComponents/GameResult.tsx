@@ -1,5 +1,8 @@
 import { type GameResultContainerProps } from "~/types/game-types"
-import { useResetContext, useResultGame } from "~/utils/custom-hooks"
+import {
+  useResetContext,
+  useResultGame
+} from "~/utils/react-custom-hooks/custom-hooks"
 
 export const GameResult = ({
   message,

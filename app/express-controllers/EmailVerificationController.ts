@@ -6,15 +6,19 @@ import express, {
 } from "express"
 import crypto from "crypto"
 import sendEmailNotification from "~/utils/backend-boilerplate/nodemailer-config"
+import type {
+  VerifyQuery,
+  VerifyResponse
+} from "~/types/auth-user-types"
 
 //Verifies the user's email using the token provided in the query params
 export const verifyEmail = async (
-  req: Request,
-  res: Response,
+  req: Request<{}, VerifyResponse, {}, VerifyQuery>,
+  res: Response<VerifyResponse>,
   next: NextFunction
 ) => {
   try {
-    const token = req.query.token as string
+    const { token } = req.query
     if (!token) {
       return res.status(400).json({
         success: false,
@@ -50,7 +54,7 @@ export const verifyEmail = async (
 
 export const resendVerificationEmail = async (
   req: Request,
-  res: Response,
+  res: Response<{ success: boolean; message: string }>,
   next: NextFunction
 ) => {
   try {

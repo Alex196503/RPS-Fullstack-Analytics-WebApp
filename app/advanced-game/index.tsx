@@ -9,8 +9,8 @@ import type { GameOutletContextProps } from "../types/layout-types"
 import { motion } from "motion/react"
 import useMenuResponsiveClose, {
   useRandomDelayedIndex
-} from "../utils/custom-hooks"
-import { resetContext } from "~/utils/context"
+} from "../utils/react-custom-hooks/custom-hooks"
+import { resetContext } from "~/utils/react-context/context"
 import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
 export function meta({}: Route.MetaArgs) {
   return [

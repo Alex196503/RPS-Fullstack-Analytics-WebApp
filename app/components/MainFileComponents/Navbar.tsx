@@ -6,7 +6,7 @@ import { MenuMobile } from "./MenuMobile"
 import { useState } from "react"
 import useMenuResponsiveClose, {
   useThemeContext
-} from "~/utils/custom-hooks"
+} from "~/utils/react-custom-hooks/custom-hooks"
 export const Navbar = () => {
   const [isOpen, setMenuOpen] = useState(false)
   useMenuResponsiveClose(isOpen, setMenuOpen)

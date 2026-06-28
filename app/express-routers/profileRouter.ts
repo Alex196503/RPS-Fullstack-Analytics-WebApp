@@ -7,7 +7,7 @@ import { UserModel } from "../schemas/UserSchema"
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import multer from "multer"
 import bcrypt from "bcrypt"
-import { EditProfileSchema } from "~/utils/zod-validation"
+import { EditProfileSchema } from "~/utils/zod-schemas/zod-validation"
 const upload = multer({ dest: "app/uploads/" })
 export const profileRouter = express.Router()
 
