@@ -37,9 +37,11 @@ export async function action({ request }: Route.ActionArgs) {
     return { success: false, errors }
   }
 
+  const baseUrl =
+    import.meta.env.VITE_API_URL || "http://localhost:5000"
   //Calling the utility function to make the API call to the authentication server for registration.
   const result = await fetchAuthenticationApi(
-    "http://localhost:5000/api/register",
+    `${baseUrl}/api/register`,
     formData
   )
   if (!result.success) {
@@ -141,7 +143,11 @@ export default function RegisterPage({
             />
           </div>
 
-          <UploadInput label="Profile Avatar" name="avatar" />
+          <UploadInput
+            label="Profile Avatar"
+            name="avatar"
+            accept="image/*"
+          />
           <PasswordInput
             label="Password"
             name="password"
@@ -156,10 +162,7 @@ export default function RegisterPage({
             minLength={6}
           />
           <div className="pt-2">
-            <button
-              type="submit"
-              className="btn-submit"
-            >
+            <button type="submit" className="btn-submit">
               Register Now
             </button>
           </div>

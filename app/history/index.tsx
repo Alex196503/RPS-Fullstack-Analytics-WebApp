@@ -1,15 +1,18 @@
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
-import { fetchUserData } from "~/utils/frontend-boilerplate/auth-utils"
-import type { MatchesDBResponse } from "~/types/game-types"
-import { redirect, useLoaderData } from "react-router"
-import React, { useEffect, useState } from "react"
+import { useLoaderData } from "react-router"
+import React, { useEffect, useRef, useState } from "react"
 import MatchCard from "~/components/HistoryComponents/MatchCard"
 import { SelectInput } from "~/components/HistoryComponents/SelectInput"
 import { SearchBar } from "~/components/HistoryComponents/SearchBar"
 import type { UserLoaderSuccess } from "~/types/auth-user-types"
 import { toast, ToastContainer } from "react-toastify"
-import { fetchHistoryPageData } from "~/utils/frontend-boilerplate/frontend-functions"
+import {
+  fetchHistoryPageData,
+  sendCSVFileToServer
+} from "~/utils/frontend-boilerplate/frontend-functions"
+import { UploadInput } from "~/components/RegisterComponents/UploadInput"
+import { useCSVImport } from "~/utils/react-custom-hooks/custom-hooks"
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -28,7 +31,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function History() {
   let ourMatches = useLoaderData<typeof loader>().matches
   let message = useLoaderData<typeof loader>().errorMessage
-
   useEffect(() => {
     if (!message) return
     toast.error(message)
@@ -50,6 +52,7 @@ export default function History() {
   let [modeFilter, setFilter] = useState("All")
   let [result, setResult] = useState("All")
   let [currentPage, setCurrentPage] = useState(1)
+  const { handleImport } = useCSVImport()
   let [searchValue, setSearchValue] = useState("")
   let filteredMatches = ourMatches.filter((match) => {
     const matchName = match.name || "Arena Match"
@@ -80,13 +83,13 @@ export default function History() {
       <Navbar />
       <main className="bg-slate-950 text-slate-100 min-h-screen p-6 font-sans">
         <div className="max-w-3xl mx-auto space-y-6">
-          <section className="flex justify-between items-center border-b border-slate-800 pb-4">
+          <section className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center border-b border-slate-800 pb-4">
             <h1 className="text-2xl font-bold tracking-wide">
               Match History
             </h1>
             {isUserVerified && (
               <a
-                href="http://localhost:5000/match/export"
+                href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/match/export`}
                 className="text-white bg-green-500 box-border border border-transparent hover:bg-green-700 shadow-xs font-medium leading-5 rounded-xl text-xl px-4 py-2.5 focus:outline-none ease-in-out duration-300 cursor-pointer"
               >
                 Export CSV
@@ -96,6 +99,22 @@ export default function History() {
               View your {ourMatches.length ?? 0} matches
             </span>
           </section>
+          <div className="max-w-3xl mx-auto mt-6 p-6 bg-slate-900 border border-dashed border-slate-700 rounded-xl text-center hover:border-green-500 duration-300 ease-in-out group">
+            {isUserVerified && (
+              <UploadInput
+                label="Upload CSV file for importing the CSV file"
+                accept=".csv"
+                name="csvExport"
+                onChange={async (
+                  e: React.ChangeEvent<HTMLInputElement>
+                ) => {
+                  const file = e.target.files?.[0]
+                  //Calling the stable function from our custom hook
+                  if (file) handleImport(file)
+                }}
+              />
+            )}
+          </div>
           <SearchBar
             label="Search for a match..."
             value={searchValue}

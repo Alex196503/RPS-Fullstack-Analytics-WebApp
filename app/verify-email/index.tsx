@@ -7,8 +7,12 @@ export async function loader({ request }: { request: Request }) {
   }
   try {
     const cookie = request.headers.get("Cookie") || ""
+
+    //We use `process.env.BACKEND_API_URL` instead of Vite's `import.meta.env` because this specific block executes exclusively on the server-side (SSR).
+    const backendUrl =
+      process.env.BACKEND_API_URL || "http://localhost:5000"
     let req = await fetch(
-      `http://localhost:5000/api/verify-email?token=${token}`,
+      `${backendUrl}/api/verify-email?token=${token}`,
       {
         method: "POST",
         headers: {

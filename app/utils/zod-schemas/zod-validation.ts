@@ -96,5 +96,22 @@ export const PasswordResetSchema = z
     path: ["confirmPassword"]
   })
 
+//Custom ZOD schema for the input file that accepts only CSV or Excel files
+export const CSVInputSchema = z.object({
+  originalname: z.string(),
+  filename: z.string(),
+  mimetype: z
+    .string()
+    .refine(
+      (val) =>
+        val === "text/csv" || val === "application/vnd.ms-excel",
+      { message: "Only CSV files are allowed" }
+    ),
+  size: z.number().max(10 * 1024 * 1024, {
+    message: "File size must be less than 10MB"
+  }),
+  path: z.string()
+})
+
 export type EditProfileInput = z.infer<typeof EditProfileSchema>
 export type PasswordResetInput = z.infer<typeof PasswordResetSchema>

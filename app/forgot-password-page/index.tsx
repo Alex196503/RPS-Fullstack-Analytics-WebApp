@@ -8,8 +8,10 @@ export async function action({ request }: Route.ActionArgs) {
   try {
     let formData = await request.formData()
     let resetField = formData.get("text") as string
+    const baseUrl =
+      import.meta.env.VITE_API_URL || "http://localhost:5000"
     const result = await fetchAuthenticationApi(
-      "http://localhost:5000/api/forgot-password",
+      `${baseUrl}/api/forgot-password`,
       { identity: resetField }
     )
     return result

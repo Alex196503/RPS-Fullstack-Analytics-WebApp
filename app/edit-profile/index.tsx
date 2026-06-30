@@ -80,7 +80,9 @@ export default function EditProfile({
       formData.append("password", currentPassword)
     }
     try {
-      const req = await fetch("http://localhost:5000/profile/edit", {
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000"
+      const req = await fetch(`${baseUrl}/profile/edit`, {
         method: "PUT",
         body: formData,
         credentials: "include"
@@ -137,7 +139,7 @@ export default function EditProfile({
                     src={
                       currentAvatar.startsWith("data:")
                         ? currentAvatar
-                        : `http://localhost:5000/uploads/${currentAvatar}`
+                        : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${currentAvatar}`
                     }
                     alt="Profile Preview"
                     className="w-full h-full object-cover"

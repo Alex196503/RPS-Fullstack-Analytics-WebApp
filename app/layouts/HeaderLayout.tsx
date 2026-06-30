@@ -12,7 +12,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   const isAdvancedPage = url.pathname.includes("advanced")
   const gameMode = isAdvancedPage ? "advanced" : "classic"
   try {
-    let req = await fetch("http://localhost:5000/score", {
+    const backendUrl =
+      process.env.BACKEND_API_URL || "http://localhost:5000"
+    let req = await fetch(`${backendUrl}/score`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

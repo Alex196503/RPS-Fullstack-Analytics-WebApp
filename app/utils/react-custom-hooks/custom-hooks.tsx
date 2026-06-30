@@ -1,7 +1,9 @@
-import { useContext, useEffect } from "react"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { gameRules } from "~/config/gameConfig"
 import { resetContext } from "../react-context/context"
 import { ToggleThemeContext } from "../react-context/context"
+import { toast } from "react-toastify"
+import { sendCSVFileToServer } from "../frontend-boilerplate/frontend-functions"
 // Custom hook to close the menu when the window is resized above a certain width e.g. 750px
 export default function useMenuResponsiveClose(
   isMenuOpen: boolean,
@@ -88,4 +90,40 @@ export function useThemeContext() {
     )
   }
   return context
+}
+
+//Custom Hook for handling CSV file imports with dynamic toast notifications. Wraps `handleImport` in `useCallback` to ensure the function reference remains stable
+export const useCSVImport = () => {
+  const toastIdRef = useRef<string | number | null>(null)
+
+  const handleImport = useCallback(async (file: File) => {
+    toastIdRef.current = toast.loading("Importing the CSV file...")
+    try {
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000"
+      let data = await sendCSVFileToServer(
+        `${baseUrl}/match/import`,
+        file
+      )
+      toast.update(toastIdRef.current, {
+        render: data.message,
+        type: data.success ? "success" : "error",
+        isLoading: false,
+        autoClose: 5000
+      })
+    } catch (error) {
+      console.error("Upload error", error)
+      if (toastIdRef.current) {
+        toast.update(toastIdRef.current, {
+          render: "Something went wrong with the network!",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000
+        })
+      }
+    } finally {
+      toastIdRef.current = null
+    }
+  }, [])
+  return { handleImport }
 }

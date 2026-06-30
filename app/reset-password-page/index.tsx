@@ -34,8 +34,10 @@ export async function action({ request }: Route.ActionArgs) {
       formData.entries()
     ) as Record<string, string>
     objectPayload.token = token
+    const baseUrl =
+      import.meta.env.VITE_API_URL || "http://localhost:5000"
     let req = await fetchAuthenticationApi(
-      "http://localhost:5000/api/reset-password",
+      `${baseUrl}/api/reset-password`,
       objectPayload
     )
     if (!req.success) {

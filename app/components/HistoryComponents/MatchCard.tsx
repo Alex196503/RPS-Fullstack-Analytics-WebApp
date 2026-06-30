@@ -2,7 +2,8 @@ import type { GameMatch } from "~/types/game-types"
 import { moveEmojis } from "~/config/historyConfig"
 import { statusStyles } from "~/config/historyConfig"
 export default function MatchCard({ match }: { match: GameMatch }) {
-  const currentStyle = statusStyles[match.result]
+  const resultKey = match.result as keyof typeof statusStyles
+  const currentStyle = statusStyles[resultKey] || statusStyles.draw
   const formattedDate = new Date(match.createdAt).toLocaleDateString(
     "ro-RO",
     {
