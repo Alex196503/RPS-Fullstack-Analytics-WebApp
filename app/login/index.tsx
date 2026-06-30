@@ -23,9 +23,10 @@ export async function action({ request }: Route.ActionArgs) {
     return { success: false, errors }
   }
   const payload = { email, password }
-
+  const baseUrl =
+    import.meta.env.VITE_API_URL || "http://localhost:5000"
   const result = await fetchAuthenticationApi(
-    "http://localhost:5000/api/login",
+    `${baseUrl}/api/login`,
     payload
   )
 

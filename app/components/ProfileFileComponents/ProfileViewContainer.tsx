@@ -26,16 +26,15 @@ export const ProfileViewContainer = ({
   ) => {
     e.preventDefault()
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/resend-verification",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include"
-        }
-      )
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000"
+      const res = await fetch(`${baseUrl}/api/resend-verification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include"
+      })
       const data = (await res.json()) as {
         success: boolean
         message: string
@@ -56,7 +55,7 @@ export const ProfileViewContainer = ({
           <img
             src={
               avatar
-                ? `http://localhost:5000/uploads/${avatar}`
+                ? `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${avatar}`
                 : LogoBonus
             }
             alt="Profile Avatar"

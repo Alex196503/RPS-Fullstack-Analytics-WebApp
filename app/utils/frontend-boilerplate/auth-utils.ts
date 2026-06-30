@@ -75,7 +75,9 @@ export const redirectIfAuthenticated = (request: Request) => {
 //Utility helper to fetch authenticated user profile data from the Express backend. Automatically forwards session cookies from the client request for authentication validation
 export const fetchUserData = async (request: Request) => {
   const cookieHeaders = request.headers.get("Cookie") || ""
-  const res = await fetch("http://localhost:5000/profile", {
+  const backendUrl =
+    process.env.BACKEND_API_URL || "http://localhost:5000"
+  const res = await fetch(`${backendUrl}/profile`, {
     headers: {
       Cookie: cookieHeaders,
       "Content-Type": "application/json"

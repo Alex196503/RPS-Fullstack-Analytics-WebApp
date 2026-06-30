@@ -64,9 +64,11 @@ export async function fetchHistoryPageData(request: Request) {
   const cookieHeaders = request.headers.get("Cookie") || ""
   const url = new URL(request.url)
   const errorParams = url.searchParams.get("error") || ""
+  const backendUrl =
+    process.env.BACKEND_API_URL || "http://localhost:5000"
   const [user, existingMatches] = await Promise.all([
     fetchUserData(request),
-    fetch("http://localhost:5000/match", {
+    fetch(`${backendUrl}/match`, {
       headers: {
         "Content-Type": "application/json",
         Cookie: cookieHeaders
@@ -96,5 +98,31 @@ export async function fetchHistoryPageData(request: Request) {
       errorParams === "no_matches"
         ? "No matches found to download the CSV file"
         : null
+  }
+}
+
+//Handler function that sends a validated CSV file to the backend server using FormData mechanism
+export async function sendCSVFileToServer(link: string, file: File) {
+  const formData = new FormData()
+  formData.append("csvFile", file)
+  try {
+    let req = await fetch(link, {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    })
+    let data = (await req.json()) as {
+      message: string
+      success: boolean
+    }
+    return data
+  } catch (err) {
+    return {
+      message:
+        err instanceof Error
+          ? err.message
+          : "Network error occurred!",
+      success: false
+    }
   }
 }

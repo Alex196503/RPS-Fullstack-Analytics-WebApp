@@ -15,10 +15,12 @@ export function meta({}: Route.MetaArgs) {
 //Function that redirects the user to the login page if he is not logged in based on the api response, that checks if the user has got a jwt token
 export async function loader({ request }: { request: Request }) {
   try {
+    const backendUrl =
+      process.env.BACKEND_API_URL || "http://localhost:5000"
     let cookieHeaders = request.headers.get("Cookie") || ""
     const [userData, statsRes] = await Promise.all([
       fetchUserData(request),
-      fetch("http://localhost:5000/match/stats", {
+      fetch(`${backendUrl}/match/stats`, {
         method: "GET",
         credentials: "include",
         headers: {

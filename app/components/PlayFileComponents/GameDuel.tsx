@@ -30,7 +30,9 @@ export const GameDuel = ({
     let cleanOutcome = parseGameOutcome(message)
 
     if (cleanOutcome) {
-      fetch("http://localhost:5000/score/update", {
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000"
+      fetch(`${baseUrl}/score/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

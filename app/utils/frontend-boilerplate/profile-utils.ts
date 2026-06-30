@@ -52,13 +52,12 @@ export const handleDeleteProfile = async () => {
   )
   if (userConfirmation) {
     try {
-      const res = await fetch(
-        "http://localhost:5000/profile/delete",
-        {
-          method: "POST",
-          credentials: "include"
-        }
-      )
+      const baseUrl =
+        import.meta.env.VITE_API_URL || "http://localhost:5000"
+      const res = await fetch(`${baseUrl}/profile/delete`, {
+        method: "POST",
+        credentials: "include"
+      })
       const data = (await res.json()) as {
         success: boolean
         message?: string

@@ -69,3 +69,9 @@ export interface UserLoaderSuccess {
   }
 }
 
+export type RowData = {
+  mode: "classic" | "advanced"
+  result: "win" | "loss" | "draw"
+  playerMove: "rock" | "paper" | "scissors"
+  opponentMove: "rock" | "paper" | "scissors"
+}

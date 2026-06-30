@@ -5,6 +5,10 @@ import express, {
 } from "express"
 import { MatchModel } from "~/schemas/MatchSchema"
 import { type StatsResponse } from "~/types/game-types"
+import fs from "fs"
+import csv from "csv-parser"
+import { CSVInputSchema } from "~/utils/zod-schemas/zod-validation"
+import type { RowData } from "~/types/auth-user-types"
 
 //Controller method to compute and return user gameplay statistics.
 export const getUserStats = async (
@@ -75,7 +79,9 @@ export const exportMatches = async (
 ) => {
   // Requests initiated via standard UI clicks will include the frontend domain in the 'Referer' header.
   const referer = req.headers.referer
-  if (!referer || !referer.includes("http://localhost:3000")) {
+  const frontEndUrl =
+    process.env.FRONTEND_URL || "http://localhost:3000"
+  if (!referer || !referer.includes(frontEndUrl)) {
     return res.status(403).json({
       success: false,
       message:
@@ -86,9 +92,7 @@ export const exportMatches = async (
   try {
     let matchesFound = await MatchModel.find({ user: idUser })
     if (matchesFound.length === 0) {
-      return res.redirect(
-        "http://localhost:3000/history?error=no_matches"
-      )
+      return res.redirect(`${frontEndUrl}/history?error=no_matches`)
     }
     res.setHeader("Content-Type", "text/csv")
     res.setHeader(
@@ -106,6 +110,79 @@ export const exportMatches = async (
       res.write(csvLine)
     }
     return res.status(200).end()
+  } catch (err) {
+    if (err instanceof Error) {
+      next(err)
+    }
+  }
+}
+
+//Handles file metadata validation, CSV stream parsing, and bulk insertion into MongoDB
+export const importMatches = async (
+  req: Request,
+  res: Response<{ success: boolean; message: string }>,
+  next: NextFunction
+) => {
+  try {
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "CSV file is required", success: false })
+    }
+    const fileValidationSchema = CSVInputSchema.safeParse(req.file)
+    const filePath = req.file.path
+    if (!fileValidationSchema.success) {
+      if (req.file.path) fs.unlink(filePath, () => {})
+      return res.status(400).json({
+        success: false,
+        message: fileValidationSchema.error.issues[0].message
+      })
+    }
+    let results: (RowData & { user: string | undefined })[] = []
+    const idUser = req.user?.user_id
+    const fileStream = fs.createReadStream(filePath)
+    fileStream
+      .pipe(
+        csv({
+          separator: ",",
+          //Cleaning the invisible characters from the header table
+          mapHeaders: ({ header }) =>
+            header.trim().replace(/^\uFEFF/, "")
+        })
+      )
+      .on("data", (chunk: RowData) =>
+        results.push({ user: idUser, ...chunk })
+      )
+      .on("error", (streamErr) => {
+        fileStream.destroy()
+        if (req.file) {
+          fs.unlink(filePath, () => {})
+        }
+        return next(streamErr)
+      })
+      .on("end", async () => {
+        try {
+          await MatchModel.insertMany(results)
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error("Could not delete temporary file:", err)
+            }
+          })
+          return res.status(200).json({
+            message: "File imported and data saved",
+            success: true
+          })
+        } catch (err) {
+          fs.unlink(filePath, () => {})
+          if (err instanceof Error) {
+            return res.status(400).json({
+              success: false,
+              message: err.message
+            })
+          }
+          return next(err)
+        }
+      })
   } catch (err) {
     if (err instanceof Error) {
       next(err)
