@@ -9,6 +9,7 @@ import fs from "fs"
 import csv from "csv-parser"
 import { CSVInputSchema } from "~/utils/zod-schemas/zod-validation"
 import type { RowData } from "~/types/auth-user-types"
+import { getSimpleStats } from "~/mongo-aggregations/aggregation-pipeline"
 
 //Controller method to compute and return user gameplay statistics.
 export const getUserStats = async (
@@ -16,23 +17,20 @@ export const getUserStats = async (
   res: Response<StatsResponse>,
   next: NextFunction
 ) => {
-  let idUser = req.user?.user_id
+  let idUser = req.user?.user_id as string
   try {
     let rank = "Rookie Gladiator"
     let emoji = "🥉"
     let badges: string[] = []
-    let [numberOfAdvancedGames, numberOfClassicGames, totalWins] =
-      await Promise.all([
-        MatchModel.countDocuments({
-          user: idUser,
-          mode: "advanced"
-        }),
-        MatchModel.countDocuments({
-          user: idUser,
-          mode: "classic"
-        }),
-        MatchModel.countDocuments({ user: idUser, result: "win" })
-      ])
+    const [aggregatedStats] = await MatchModel.aggregate(
+      getSimpleStats(idUser)
+    )
+    
+    const numberOfAdvancedGames = aggregatedStats?.advancedCount ?? 0
+    const numberOfClassicGames = aggregatedStats?.classicCount ?? 0
+    const totalWins = aggregatedStats?.winCount ?? 0
+    const totalLosses = aggregatedStats?.lossCount ?? 0
+    const totalDraws = aggregatedStats?.drawCount ?? 0
     let totalGames = numberOfAdvancedGames + numberOfClassicGames
     if (totalWins >= 50) {
       rank = "Diamond Legend"
@@ -59,6 +57,8 @@ export const getUserStats = async (
         stats: {
           totalGames,
           totalWins,
+          totalLosses,
+          totalDraws,
           advanced: numberOfAdvancedGames,
           classic: numberOfClassicGames
         }

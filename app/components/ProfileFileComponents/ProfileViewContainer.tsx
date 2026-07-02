@@ -71,7 +71,7 @@ export const ProfileViewContainer = ({
               Account Not Fully Verified!
             </h3>
             <p className="text-xs text-gray-400 max-w-sm">
-              Some premium features like charts and CSV exports are
+              Some premium features like CSV exports/imports are
               locked.
             </p>
             <a

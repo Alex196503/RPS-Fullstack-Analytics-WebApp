@@ -1,6 +1,7 @@
 import { redirect } from "react-router"
 import { fetchUserData } from "./auth-utils"
 import { type MatchesDBResponse } from "~/types/game-types"
+import { toast } from "react-toastify"
 //Parses a raw game message to extract a standardized outcome ('win', 'loss', or 'draw').
 export function parseGameOutcome(message: string) {
   let cleanOutcome = ""
@@ -124,5 +125,35 @@ export async function sendCSVFileToServer(link: string, file: File) {
           : "Network error occurred!",
       success: false
     }
+  }
+}
+
+//Handler function that sends a DELETE request to the backend server to reset the user's match history
+export async function deleteUserMatchHistory(link: string) {
+  try {
+    let req = await fetch(link, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    })
+    let data = (await req.json()) as {
+      success: boolean
+      message: string
+    }
+    if (!req.ok) {
+      throw new Error(
+        data.message || "Something went wrong on the server"
+      )
+    }
+    toast.success(data.message || "Match history reset successfully")
+  } catch (err) {
+    console.error("Delete request failed:", err)
+    const errorMessage =
+      err instanceof Error
+        ? err.message
+        : "Network error, please try again."
+    toast.error(errorMessage)
   }
 }

@@ -10,6 +10,10 @@ import {
   getUserStats,
   importMatches
 } from "~/express-controllers/MatchController"
+import {
+  getMatchStats,
+  resetStats
+} from "~/express-controllers/StatsController"
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import { MatchModel } from "~/schemas/MatchSchema"
 const upload = multer({
@@ -49,7 +53,7 @@ matchRouter.get(
 )
 
 //Route that makes fast queries to find some informations about user stats
-matchRouter.get("/stats", authentificationMiddleware, getUserStats)
+matchRouter.get("/rank", authentificationMiddleware, getUserStats)
 
 //Route that exports user match history to a CSV file and requires authentication cookie
 matchRouter.get("/export", authentificationMiddleware, exportMatches)
@@ -61,3 +65,9 @@ matchRouter.post(
   upload.single("csvFile"),
   importMatches
 )
+
+//Route that resets user match history (deletes all matches for the authenticated user) and requires authentication cookie
+matchRouter.delete("/reset", authentificationMiddleware, resetStats)
+
+//Route that queries the database to select some statistics about the matches of the current user that is logged in
+matchRouter.get("/stats", authentificationMiddleware, getMatchStats)

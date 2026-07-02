@@ -12,6 +12,7 @@ export default [
   route("/logout", "./logout/index.tsx"),
   route("/profile", "./edit-profile/index.tsx"),
   route("/history", "./history/index.tsx"),
+  route("/dashboard", "./dashboard/index.tsx"),
   route("/verify-email", "./verify-email/index.tsx"),
   route("/forgot-password", "./forgot-password-page/index.tsx"),
   route("/reset-password", "./reset-password-page/index.tsx"),
