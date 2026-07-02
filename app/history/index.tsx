@@ -1,18 +1,19 @@
 import { Navbar } from "~/components/MainFileComponents/Navbar"
 import type { Route } from "../+types/root"
-import { useLoaderData } from "react-router"
-import React, { useEffect, useRef, useState } from "react"
+import { useLoaderData, useRevalidator } from "react-router"
+import React, { useCallback, useEffect, useState } from "react"
 import MatchCard from "~/components/HistoryComponents/MatchCard"
 import { SelectInput } from "~/components/HistoryComponents/SelectInput"
 import { SearchBar } from "~/components/HistoryComponents/SearchBar"
 import type { UserLoaderSuccess } from "~/types/auth-user-types"
 import { toast, ToastContainer } from "react-toastify"
 import {
-  fetchHistoryPageData,
-  sendCSVFileToServer
+  deleteUserMatchHistory,
+  fetchHistoryPageData
 } from "~/utils/frontend-boilerplate/frontend-functions"
 import { UploadInput } from "~/components/RegisterComponents/UploadInput"
 import { useCSVImport } from "~/utils/react-custom-hooks/custom-hooks"
+import ActionModal from "~/components/HistoryComponents/ActionModal"
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -44,7 +45,16 @@ export default function History() {
       )
     }
   }, [message])
+  
+  const validate = useRevalidator()
 
+  const resetHistory = useCallback(async () => {
+    let link = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/match/reset`
+    await deleteUserMatchHistory(link)
+    if (typeof validate.revalidate === "function") {
+      validate.revalidate()
+    }
+  }, [validate])
   const ourLoaderData = useLoaderData<
     typeof loader
   >() as UserLoaderSuccess
@@ -53,6 +63,7 @@ export default function History() {
   let [result, setResult] = useState("All")
   let [currentPage, setCurrentPage] = useState(1)
   const { handleImport } = useCSVImport()
+  let [modalOpen, setModalOpen] = useState(false)
   let [searchValue, setSearchValue] = useState("")
   let filteredMatches = ourMatches.filter((match) => {
     const matchName = match.name || "Arena Match"
@@ -141,18 +152,39 @@ export default function History() {
             }}
             options={["All", "Win", "Draw", "Loss"]}
           />
-          <button
-            type="reset"
-            className="bg-gray-200 text-black font-medium hover:bg-gray-300 cursor-pointer block mx-auto hover:text-shadow-amber-50 duration-300 ease-in-out px-4 py-2 rounded"
-            onClick={() => {
-              setCurrentPage(1)
-              setFilter("All")
-              setResult("All")
-              setSearchValue("")
-            }}
-          >
-            Reset Form
-          </button>
+          <section className="w-full flex justify-between items-center py-6 border-b border-white">
+            <button
+              type="reset"
+              className="bg-gray-200 text-black font-medium hover:bg-gray-300 cursor-pointer block mx-auto hover:text-shadow-amber-50 duration-300 ease-in-out px-4 py-2 rounded"
+              onClick={() => {
+                setCurrentPage(1)
+                setFilter("All")
+                setResult("All")
+                setSearchValue("")
+              }}
+            >
+              Reset Form
+            </button>
+            <button
+              type="button"
+              className="bg-red-500 text-white font-medium hover:bg-red-300 cursor-pointer block mx-auto hover:text-black duration-300 ease-in-out px-4 py-2 rounded"
+              onClick={() => {
+                setCurrentPage(1)
+                setModalOpen((prev) => !prev)
+              }}
+            >
+              Reset Stats
+            </button>
+          </section>
+          {modalOpen && isUserVerified && (
+            <ActionModal
+              title="Reset Match History?"
+              messageInfo="Are you sure you want to permanently delete all your match statistics? This action cannot be undone."
+              setModalOpen={setModalOpen}
+              setCurrentPage={setCurrentPage}
+              resetHistory={resetHistory}
+            />
+          )}
           {currentItems.map((match) => {
             return <MatchCard key={match._id} match={match} />
           })}

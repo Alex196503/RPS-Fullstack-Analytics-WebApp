@@ -102,5 +102,6 @@ export const globalLinks: NavLinks[] = [
   { name: "Classic play", route: "/play/classic" },
   { name: "Advanced play", route: "/play/advanced" },
   { name: "Edit profile", route: "/profile" },
-  { name: "History", route: "/history" }
+  { name: "History", route: "/history" },
+  { name: "Dashboard", route: "/dashboard" }
 ]

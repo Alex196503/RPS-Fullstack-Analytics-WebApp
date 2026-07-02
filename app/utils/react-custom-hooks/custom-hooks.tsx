@@ -1,4 +1,10 @@
-import { useCallback, useContext, useEffect, useRef } from "react"
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useMemo
+} from "react"
 import { gameRules } from "~/config/gameConfig"
 import { resetContext } from "../react-context/context"
 import { ToggleThemeContext } from "../react-context/context"
@@ -126,4 +132,46 @@ export const useCSVImport = () => {
     }
   }, [])
   return { handleImport }
+}
+
+//Custom hook to format timestamps into counts of games played during different times of the day.
+export const useChartData = (timeStamps: Date[] | undefined) => {
+  const gamesByPeriod = useMemo(() => {
+    if (!timeStamps) return [0, 0, 0, 0]
+    let morningGames = 0
+    let midDayGames = 0
+    let eveningGames = 0
+    let nightGames = 0
+    timeStamps.forEach((timestamp) => {
+      let date = new Date(timestamp)
+      const hour = date.getHours()
+      if (hour >= 6 && hour < 12) {
+        morningGames++
+      } else if (hour >= 12 && hour < 18) {
+        midDayGames++
+      } else if (hour >= 18 && hour < 24) {
+        eveningGames++
+      } else {
+        nightGames++
+      }
+    })
+    return [morningGames, midDayGames, eveningGames, nightGames]
+  }, [timeStamps])
+  return { gamesByPeriod }
+}
+
+//Custom hook to calculate the progression of the win rate over time based on match outcomes.
+export const useStatsResult = (results: string[] | undefined) => {
+  const winRateResults = useMemo(() => {
+    if (!results) return []
+    let wins = 0
+    return results.map((result, index) => {
+      if (result === "win") {
+        wins++
+      }
+      let winRate = wins / (index + 1)
+      return Number((winRate * 100).toFixed(2))
+    })
+  }, [results])
+  return { winRateResults }
 }

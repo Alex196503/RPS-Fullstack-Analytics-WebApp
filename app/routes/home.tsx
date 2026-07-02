@@ -20,7 +20,7 @@ export async function loader({ request }: { request: Request }) {
     let cookieHeaders = request.headers.get("Cookie") || ""
     const [userData, statsRes] = await Promise.all([
       fetchUserData(request),
-      fetch(`${backendUrl}/match/stats`, {
+      fetch(`${backendUrl}/match/rank`, {
         method: "GET",
         credentials: "include",
         headers: {

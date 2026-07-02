@@ -91,8 +91,21 @@ export interface StatsResponse {
     stats: {
       totalGames: number
       totalWins: number
+      totalLosses: number
+      totalDraws: number
       advanced: number
       classic: number
     }
   }
+}
+
+export interface DashboardFacetResult {
+  favoriteMoveBranch: {
+    _id: string
+    counter: number
+  }[]
+  advancedRatioBranch: {
+    _id: string
+    advancedPercentage: number
+  }[]
 }
