@@ -10,6 +10,7 @@ import { resetContext } from "../react-context/context"
 import { ToggleThemeContext } from "../react-context/context"
 import { toast } from "react-toastify"
 import { sendCSVFileToServer } from "../frontend-boilerplate/frontend-functions"
+import { getRandomIndex } from "../game-helper-functions/gameHelper"
 // Custom hook to close the menu when the window is resized above a certain width e.g. 750px
 export default function useMenuResponsiveClose(
   isMenuOpen: boolean,
@@ -35,12 +36,13 @@ export function useRandomDelayedIndex(
   setHouseChoice: (
     value: React.SetStateAction<number | null>
   ) => void,
-  limit = 3
+  min = 0,
+  max = 2
 ) {
   useEffect(() => {
     if (choice.length > 0) {
       const myTimeout = setTimeout(() => {
-        let randomIndex = Math.floor(Math.random() * limit)
+        const randomIndex = getRandomIndex(min, max)
         if (randomIndex !== -1) {
           setHouseChoice(randomIndex)
         }
