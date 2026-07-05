@@ -38,7 +38,9 @@ export default function GameApp() {
   let indexChoice = GameBadges.findIndex(
     (badge) => badge.name.toLowerCase() === choice.toLowerCase()
   )
-  useRandomDelayedIndex(choice, setHouseChoice, 3)
+  const MIN_INDEX = 0
+  const MAX_INDEX = 2
+  useRandomDelayedIndex(choice, setHouseChoice, MIN_INDEX, MAX_INDEX)
   return (
     <resetContext.Provider
       value={{ setChoice, setHouseChoice, setMessage }}

@@ -8,6 +8,7 @@ import { getCombinedDashboardStats } from "~/mongo-aggregations/aggregation-pipe
 import { MatchModel } from "~/schemas/MatchSchema"
 import { UserModel } from "~/schemas/UserSchema"
 import type { DashboardFacetResult } from "~/types/game-types"
+import { calculateStreak } from "~/utils/game-helper-functions/gameHelper"
 
 //Controller method to handle match history reset (deletion of all matches for the authenticated user)
 export const resetStats = async (
@@ -84,13 +85,7 @@ export const getMatchStats = async (
     const oldestGames = [...(allGames || [])].reverse()
     const timeStamps = allGames.map((game) => game.createdAt)
     let fullResults = oldestGames.map((game) => game.result)
-    let currentStreak = 0
-    for (let games of recentGames) {
-      if (games.result === "win") {
-        currentStreak++
-      } else break
-    }
-
+    let currentStreak = calculateStreak(recentGames)
     const [aggregatedData] = (await MatchModel.aggregate(
       getCombinedDashboardStats(idUser)
     )) as DashboardFacetResult[]

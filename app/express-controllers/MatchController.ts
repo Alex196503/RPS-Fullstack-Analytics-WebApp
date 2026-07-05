@@ -4,12 +4,16 @@ import express, {
   type Response
 } from "express"
 import { MatchModel } from "~/schemas/MatchSchema"
-import { type StatsResponse } from "~/types/game-types"
+import {
+  type StatsResponse,
+  type StatsResponseMongoDb
+} from "~/types/game-types"
 import fs from "fs"
 import csv from "csv-parser"
 import { CSVInputSchema } from "~/utils/zod-schemas/zod-validation"
 import type { RowData } from "~/types/auth-user-types"
 import { getSimpleStats } from "~/mongo-aggregations/aggregation-pipeline"
+import { calculateRank } from "~/utils/game-helper-functions/gameHelper"
 
 //Controller method to compute and return user gameplay statistics.
 export const getUserStats = async (
@@ -19,35 +23,22 @@ export const getUserStats = async (
 ) => {
   let idUser = req.user?.user_id as string
   try {
-    let rank = "Rookie Gladiator"
-    let emoji = "🥉"
     let badges: string[] = []
-    const [aggregatedStats] = await MatchModel.aggregate(
+    const [aggregatedStats] = (await MatchModel.aggregate(
       getSimpleStats(idUser)
-    )
-    
+    )) as (StatsResponseMongoDb | undefined)[]
     const numberOfAdvancedGames = aggregatedStats?.advancedCount ?? 0
     const numberOfClassicGames = aggregatedStats?.classicCount ?? 0
     const totalWins = aggregatedStats?.winCount ?? 0
     const totalLosses = aggregatedStats?.lossCount ?? 0
     const totalDraws = aggregatedStats?.drawCount ?? 0
     let totalGames = numberOfAdvancedGames + numberOfClassicGames
-    if (totalWins >= 50) {
-      rank = "Diamond Legend"
-      emoji = "💎"
-    } else if (totalWins >= 11) {
-      rank = "Gold Master"
-      emoji = "🥇"
-    } else if (numberOfAdvancedGames > 10) {
-      rank = "Advanced Strategist"
-      emoji = "⚡"
-    } else if (
-      totalGames > 20 &&
-      numberOfClassicGames / totalGames > 0.9
-    ) {
-      rank = "Classic Purist"
-      emoji = "🪵"
-    }
+    let { emoji, rank } = calculateRank(
+      totalWins,
+      numberOfAdvancedGames,
+      numberOfClassicGames,
+      totalGames
+    )
     res.status(200).json({
       success: true,
       data: {

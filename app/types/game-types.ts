@@ -109,3 +109,13 @@ export interface DashboardFacetResult {
     advancedPercentage: number
   }[]
 }
+
+export interface StatsResponseMongoDb {
+  _id: string
+  advancedCount: number
+  classicCount: number
+  winCount: number
+  lossCount: number
+  drawCount: number
+}
+

@@ -29,12 +29,14 @@ export default function AdvancedGame() {
   const [choice, setChoice] = useState("")
   const [message, setMessage] = useState("")
   let indexChoice = GameBadges.findIndex(
-    (badge) => badge.name.toLowerCase() === choice.toLowerCase()
+    (badge) => badge?.name?.toLowerCase() === choice?.toLowerCase()
   )
   const [houseChoiceIndex, setHouseChoice] = useState<number | null>(
     null
   )
-  useRandomDelayedIndex(choice, setHouseChoice, GameBadges.length)
+  const MIN_INDEX = 0
+  const MAX_INDEX = 4
+  useRandomDelayedIndex(choice, setHouseChoice, MIN_INDEX, MAX_INDEX)
 
   return (
     <resetContext.Provider
