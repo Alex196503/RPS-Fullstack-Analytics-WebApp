@@ -1,5 +1,7 @@
 // File with game logic functions that are used in the game components.
 
+import { historicalCities, prefixes } from "~/config/historyConfig"
+
 export type StreakGameInput = {
   result: string
 }
@@ -46,4 +48,15 @@ export function calculateStreak(recentGames: StreakGameInput[]) {
     } else break
   }
   return currentStreak
+}
+
+//Helper function to build some names for the matches based on some existing prefixes and cities
+export function buildNameMatches() {
+  const prefixChosen =
+    prefixes[Math.floor(Math.random() * prefixes.length)]
+  const cityChosen =
+    historicalCities[
+      Math.floor(Math.random() * historicalCities.length)
+    ]
+  return { prefixChosen, cityChosen }
 }

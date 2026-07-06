@@ -1,9 +1,11 @@
+/// <reference types="vitest" />
 import { reactRouter } from "@react-router/dev/vite"
 import tailwindcss from "@tailwindcss/vite"
-import { defineConfig } from "vite"
+import { defineConfig } from "vitest/config"
 import devtoolsJson from "vite-plugin-devtools-json"
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), devtoolsJson()],
+
   resolve: {
     tsconfigPaths: true
   },
@@ -18,5 +20,10 @@ export default defineConfig({
         ws: true
       }
     }
+  },
+  test: {
+    globals: true,
+    reporters: ["default", "html"],
+    outputFile: "./vitest-report/index.html"
   }
 })

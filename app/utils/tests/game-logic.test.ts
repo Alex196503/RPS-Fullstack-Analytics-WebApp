@@ -1,4 +1,7 @@
+import { describe, test, expect } from "vitest"
+import { historicalCities, prefixes } from "~/config/historyConfig"
 import {
+  buildNameMatches,
   calculateRank,
   calculateStreak,
   getRandomIndex
@@ -97,4 +100,18 @@ describe("Test the current streak associated to an user", () => {
       expect(result).toBe(expectedCurrentStreak)
     }
   )
+})
+
+describe("Testing building name for the matches function", () => {
+  test("Checking if the array doesn't show an index out of bound behaviour", () => {
+    for (let i = 0; i < 100; i++) {
+      let { prefixChosen, cityChosen } = buildNameMatches()
+      let prefixIndex = prefixes.indexOf(prefixChosen)
+      let cityIndex = historicalCities.indexOf(cityChosen)
+      expect(prefixIndex).not.toBe(-1)
+      expect(cityIndex).not.toBe(-1)
+      expect(prefixIndex).toBeLessThan(prefixes.length)
+      expect(cityIndex).toBeLessThan(historicalCities.length)
+    }
+  })
 })
