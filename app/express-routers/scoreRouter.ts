@@ -3,12 +3,12 @@ import express, {
   type Request,
   type Response
 } from "express"
-import { historicalCities, prefixes } from "~/config/historyConfig"
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import { MatchModel } from "~/schemas/MatchSchema"
 import { UserModel } from "~/schemas/UserSchema"
-import type{ ScoreReqBody } from "~/types/game-types"
+import type { ScoreReqBody } from "~/types/game-types"
 import { updateModeScore } from "~/utils/backend-boilerplate/backend-functions"
+import { buildNameMatches } from "~/utils/game-helper-functions/gameHelper"
 export const scoreRouter = express.Router()
 
 //Route that queries the mongoDB database to select current user score
@@ -80,13 +80,8 @@ scoreRouter.post(
       //This method commits the in-memory changes to MongoDB and sends all updated values to the DB in a single network request
       await userFound.save()
 
-      const prefixChosen =
-        prefixes[Math.floor(Math.random() * prefixes.length)]
-      const cityChosen =
-        historicalCities[
-          Math.floor(Math.random() * historicalCities.length)
-        ]
-
+      let { prefixChosen, cityChosen } = buildNameMatches()
+      
       const match = new MatchModel({
         user: id,
         playerMove,
