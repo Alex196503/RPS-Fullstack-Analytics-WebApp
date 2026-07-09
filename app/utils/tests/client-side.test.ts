@@ -1,5 +1,15 @@
-import { describe, afterEach, expect, vi, vitest, test } from "vitest"
+import {
+  describe,
+  afterEach,
+  expect,
+  vi,
+  vitest,
+  test,
+  beforeEach
+} from "vitest"
 import { fetchAuthenticationApi } from "../frontend-boilerplate/frontend-functions"
+import { toast } from "react-toastify"
+import { hasNoProfileChanges } from "../frontend-boilerplate/profile-utils"
 
 //Integration and unit tests for the main client-side authentication API utility. Covers both successful requests (happy path) and server/validation error handlings.
 describe("Testing our main API boilerplate function", () => {
@@ -65,5 +75,50 @@ describe("Testing our main API boilerplate function", () => {
     expect(result.success).toBeFalsy()
     expect(result.errors).not.toBeNull()
     expect(result.errors).toContain("Passwords do not match")
+  })
+})
+
+//These lines of code help Vitest to intercept/catch the library and to convert it into a spy
+vi.mock("react-toastify", () => ({
+  toast: {
+    info: vi.fn()
+  }
+}))
+
+//Unit tests used to test our function that decides if the user has changed something on his profile in the specific form
+describe("Mock tests on the function that makes changes on the user's profile", async () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  test("should return shouldStop true and trigger toast when no changes to the profile are made", () => {
+    const result = hasNoProfileChanges(
+      "alex123",
+      "alex123",
+      "alex@test.com",
+      "alex@test.com",
+      "",
+      null
+    )
+    expect(result.shouldStop).toBeTruthy()
+    expect(result.hasChanges).toBeFalsy()
+    expect(toast.info).toHaveBeenCalledWith(
+      "No changes made to the profile.",
+      expect.objectContaining({ position: "top-right" })
+    )
+  })
+
+  test("should return hasChanges true and not trigger toast when the username changes", () => {
+    const result = hasNoProfileChanges(
+      "alex1234",
+      "alex123",
+      "alex@test.com",
+      "alex@test.com",
+      "",
+      null
+    )
+    expect(result.hasChanges).toBeTruthy()
+    expect(result.shouldStop).toBeFalsy()
+    expect(toast.info).not.toHaveBeenCalled()
   })
 })

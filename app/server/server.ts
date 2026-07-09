@@ -7,7 +7,7 @@ import "dotenv/config" // Load environment variables from .env file
 import mongoose from "mongoose"
 import cookieParser from "cookie-parser"
 import path from "path"
-const app = express()
+export const app = express()
 const port = process.env.PORT || 5000
 import { authRouter } from "../express-routers/authRouter"
 import { profileRouter } from "~/express-routers/profileRouter"

@@ -40,6 +40,7 @@ export const hasNoProfileChanges = (
       position: "top-right",
       autoClose: 3000
     })
+    //If it shouldStop flag is true, it stops the execution from sending the data to our server
     return { hasChanges: false, shouldStop: true }
   }
   return { hasChanges: true, shouldStop: false }
