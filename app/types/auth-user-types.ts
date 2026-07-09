@@ -56,8 +56,7 @@ interface VerifySuccessResponse {
 }
 
 export type VerifyResponse =
-  | VerifyErrorResponse
-  | VerifySuccessResponse
+  VerifyErrorResponse | VerifySuccessResponse
 
 export interface UserLoaderSuccess {
   user?: {
@@ -74,4 +73,11 @@ export type RowData = {
   result: "win" | "loss" | "draw"
   playerMove: "rock" | "paper" | "scissors"
   opponentMove: "rock" | "paper" | "scissors"
+}
+
+export interface UpdateProfileOptions {
+  username?: string
+  email?: string
+  password?: string
+  avatarPath?: string
 }
