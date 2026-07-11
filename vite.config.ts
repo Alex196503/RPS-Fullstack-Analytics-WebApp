@@ -4,7 +4,12 @@ import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "vitest/config"
 import devtoolsJson from "vite-plugin-devtools-json"
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), devtoolsJson()],
+  //// Stopping react router when we turn on Vitest, so we don't get preamble errors
+  plugins: [
+    tailwindcss(),
+    !process.env.VITEST ? reactRouter() : null,
+    devtoolsJson()
+  ].filter(Boolean),
 
   resolve: {
     tsconfigPaths: true
@@ -24,6 +29,8 @@ export default defineConfig({
   test: {
     globals: true,
     reporters: ["default", "html"],
-    outputFile: "./vitest-report/index.html"
+    outputFile: "./vitest-report/index.html",
+    environment: "jsdom",
+    setupFiles: ["./vitest.setup.ts"]
   }
 })

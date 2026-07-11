@@ -40,4 +40,14 @@ userSchema.pre("save", function () {
     this.advancedScore.totalScore = advancedWins * 3 + advancedDraws
   }
 })
+
+//Mongoose middleware that deletes related matches to the user that is removed so we do not have orphaned data in our database
+userSchema.pre("findOneAndDelete", async function () {
+  const docToQuery = await this.model.findOne(this.getQuery())
+  if (docToQuery) {
+    await mongoose
+      .model("Match")
+      .deleteMany({ userId: docToQuery._id })
+  }
+})
 export const UserModel = mongoose.model("User", userSchema)
