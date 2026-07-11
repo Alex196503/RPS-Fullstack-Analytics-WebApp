@@ -45,7 +45,7 @@ export default function History() {
       )
     }
   }, [message])
-  
+
   const validate = useRevalidator()
 
   const resetHistory = useCallback(async () => {
@@ -110,8 +110,8 @@ export default function History() {
               View your {ourMatches.length ?? 0} matches
             </span>
           </section>
-          <div className="max-w-3xl mx-auto mt-6 p-6 bg-slate-900 border border-dashed border-slate-700 rounded-xl text-center hover:border-green-500 duration-300 ease-in-out group">
-            {isUserVerified && (
+          {isUserVerified && (
+            <div className="max-w-3xl mx-auto mt-6 p-6 bg-slate-900 border border-dashed border-slate-700 rounded-xl text-center hover:border-green-500 duration-300 ease-in-out group">
               <UploadInput
                 label="Upload CSV file for importing the CSV file"
                 accept=".csv"
@@ -124,8 +124,8 @@ export default function History() {
                   if (file) handleImport(file)
                 }}
               />
-            )}
-          </div>
+            </div>
+          )}
           <SearchBar
             label="Search for a match..."
             value={searchValue}

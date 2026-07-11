@@ -1,4 +1,4 @@
-import { Link, redirect } from "react-router"
+import { Link, redirect, useNavigation } from "react-router"
 import { Form } from "react-router"
 import {
   redirectIfAuthenticated,
@@ -49,11 +49,13 @@ export async function action({ request }: Route.ActionArgs) {
       errors: result.errors
     }
   }
-  return redirect("/login")
+  throw redirect("/login")
 }
 export default function RegisterPage({
   actionData
 }: Route.ComponentProps) {
+  const navigation = useNavigation()
+  const isSubmitting = navigation.state === "submitting"
   return (
     <div className="register-container">
       <div className="w-full max-w-md space-y-6 bg-gray-900 p-5 sm:p-8 rounded-xl border border-gray-800 shadow-2xl text-white">
@@ -69,7 +71,10 @@ export default function RegisterPage({
           <div className="mb-6 px-4 py-5 bg-red-700 flex flex-col gap-2 text-red-100 text-left rounded-lg border border-red-500 shadow-md">
             {(actionData.errors.email?._errors?.[0] ||
               typeof actionData.errors.email === "string") && (
-              <p className="text-sm font-semibold text-white">
+              <p
+                data-testid="email-paragraph"
+                className="text-sm font-semibold text-white"
+              >
                 Email:{" "}
                 {actionData.errors.email?._errors?.[0] ||
                   actionData.errors.email}
@@ -87,7 +92,10 @@ export default function RegisterPage({
 
             {(actionData.errors.avatar?._errors?.[0] ||
               typeof actionData.errors.avatar === "string") && (
-              <p className="text-sm font-semibold text-white">
+              <p
+                data-testid="avatar"
+                className="text-sm font-semibold text-white"
+              >
                 Avatar:{" "}
                 {actionData.errors.avatar?._errors?.[0] ||
                   actionData.errors.avatar}
@@ -106,7 +114,10 @@ export default function RegisterPage({
             {(actionData.errors.confirmPassword?._errors?.[0] ||
               typeof actionData.errors.confirmPassword ===
                 "string") && (
-              <p className="text-sm font-semibold text-white">
+              <p
+                data-testid="confirm-password"
+                className="text-sm font-semibold text-white"
+              >
                 Confirm Password:{" "}
                 {actionData.errors.confirmPassword?._errors?.[0] ||
                   actionData.errors.confirmPassword}
@@ -162,8 +173,13 @@ export default function RegisterPage({
             minLength={6}
           />
           <div className="pt-2">
-            <button type="submit" className="btn-submit">
-              Register Now
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn-submit"
+              data-testid="btn-submit"
+            >
+              {isSubmitting ? "Registering..." : "Register now!"}
             </button>
           </div>
         </Form>
