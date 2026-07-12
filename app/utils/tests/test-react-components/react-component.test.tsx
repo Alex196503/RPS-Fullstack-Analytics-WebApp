@@ -130,3 +130,4 @@ describe("RegisterPage - Form Validation and File Upload", () => {
       expect(previewAfterRemoval).toBeNull()
     }))
 })
+

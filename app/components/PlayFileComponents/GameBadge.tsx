@@ -15,6 +15,7 @@ export const GameBadge = ({
   return (
     <div
       onClick={onClick}
+      data-testid={item.name}
       style={{
         boxShadow: `0 8px 0 0 var(${item.container.shadowColor})`
       }}
