@@ -138,7 +138,11 @@ export default function ResetPasswordPage() {
             minLength={6}
           />
           <div className="pt-2">
-            <button type="submit" className="btn-submit">
+            <button
+              type="submit"
+              data-testid="submit"
+              className="btn-submit"
+            >
               Update password
             </button>
           </div>
@@ -154,6 +158,7 @@ export default function ResetPasswordPage() {
       </div>
       {isMounted && (
         <ToastContainer
+          role="status"
           position="top-right"
           autoClose={5000}
           closeOnClick={true}

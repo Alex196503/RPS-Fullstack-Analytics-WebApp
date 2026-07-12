@@ -22,7 +22,10 @@ export const GameResult = ({
   }
   return (
     <div className="flex flex-col w-full items-center px-4 py-5 mt-2 order-3 md:order-none">
-      <h3 className="text-4xl text-white font-bold tracking-wide py-4 uppercase ">
+      <h3
+        data-testid="result"
+        className="text-4xl text-white font-bold tracking-wide py-4 uppercase "
+      >
         {message}
       </h3>
       <button

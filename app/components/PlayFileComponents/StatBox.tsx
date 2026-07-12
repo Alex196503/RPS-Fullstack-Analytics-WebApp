@@ -10,7 +10,10 @@ export const ScoreContainer = ({
         <h3 className="text-(--color-blue-700) tracking-widest uppercase font-semibold">
           {title}
         </h3>
-        <p className="text-(--color-navy-900) text-5xl font-bold">
+        <p
+          data-testid="paragraph-score"
+          className="text-(--color-navy-900) text-5xl font-bold"
+        >
           {value}
         </p>
       </div>
