@@ -8,7 +8,8 @@ import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import multer from "multer"
 import bcrypt from "bcrypt"
 import { EditProfileSchema } from "~/utils/zod-schemas/zod-validation"
-const upload = multer({ dest: "app/uploads/" })
+import { uploadMiddleware } from "~/utils/backend-boilerplate/cloudinary-upload-middleware"
+import { cloudinaryVar } from "~/cloudinaryConfig"
 export const profileRouter = express.Router()
 
 //Route to get the user profile data, that checks if the user is authenticated with the authentificationMiddleware
@@ -45,9 +46,10 @@ profileRouter.get(
 profileRouter.put(
   "/edit",
   authentificationMiddleware,
-  upload.single("avatar"),
+  uploadMiddleware("avatars").single("avatar"),
   async (req: Request, res: Response, next: NextFunction) => {
     let id = req.user?.user_id
+    const avatarPath = req.file ? req.file.path : undefined
     const { username, email, password } = req.body as {
       username: string
       email: string
@@ -85,7 +87,7 @@ profileRouter.put(
         updateData.password = cryptedPass
       }
       if (req.file) {
-        updateData = { ...updateData, avatar: req.file.filename }
+        updateData = { ...updateData, avatar: avatarPath }
       }
       await UserModel.findByIdAndUpdate(id, { $set: updateData })
       return res.status(200).json({
@@ -112,8 +114,17 @@ profileRouter.post(
           message: "User not found"
         })
       }
+      let avatar = userFound.avatar
+      const match = avatar.match(/\/upload\/v\d+\/(.+)\.[a-z]+$/)
+      let publicIdForDeletion = ""
+      if (match) {
+        publicIdForDeletion = match[1]
+      }
       res.clearCookie("token")
       await UserModel.deleteOne({ _id: id })
+      if (publicIdForDeletion) {
+        await cloudinaryVar.uploader.destroy(publicIdForDeletion)
+      }
       return res
         .status(200)
         .json({ message: "User deleted!", success: true })

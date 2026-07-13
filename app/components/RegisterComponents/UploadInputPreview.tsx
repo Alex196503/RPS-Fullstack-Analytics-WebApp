@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import LogoBonus from "../../images/image-victor.jpg"
 export const UploadInputPreview = ({
   imageUploaded,
   handleRemoveImage
@@ -15,7 +16,11 @@ export const UploadInputPreview = ({
   return (
     <div className="mt-2 flex items-center gap-4 p-3 bg-gray-950 border border-gray-800 rounded-lg">
       <img
-        src={previewUrl}
+        src={
+          previewUrl && previewUrl.trim() !== ""
+            ? previewUrl
+            : LogoBonus
+        }
         alt="Avatar preview"
         className="w-16 h-16 object-cover rounded-full border border-gray-700"
       />

@@ -24,14 +24,14 @@ import {
   resetPassword
 } from "~/express-controllers/IdentityController"
 import type z from "zod"
-const upload = multer({ dest: "app/uploads/" })
+import { uploadMiddleware } from "~/utils/backend-boilerplate/cloudinary-upload-middleware"
 export const authRouter = express.Router()
 
 type RegisterInput = z.infer<typeof RegisterSchema>
 //The register route that performs and validates our register based on our zod validation schema
 authRouter.post(
   "/register",
-  upload.single("avatar"),
+  uploadMiddleware("avatars").single("avatar"),
   async (
     req: Request<{}, {}, RegisterInput>,
     res: Response,
@@ -60,7 +60,7 @@ authRouter.post(
         })
       }
       const userData = result.data
-      const fileData = fileResult.data
+      const avatar = req.file ? req.file.path : undefined
       let { email, password, username } = userData
       let userAlreadyExists = await UserModel.findOne({
         email: email
@@ -79,7 +79,7 @@ authRouter.post(
       const user = new UserModel({
         email,
         password: bcryptedPassword,
-        avatar: fileData.filename,
+        avatar,
         username,
         verificationToken,
         verificationTokenExpiresAt: new Date(
