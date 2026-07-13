@@ -5,6 +5,7 @@ import { TextInput } from "~/components/RegisterComponents/TextInput"
 import type { Route } from "./+types"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import LogoBonus from "../images//image-victor.jpg"
 
 import { type EditProfileResponse } from "~/types/auth-user-types"
 import { type InitialData } from "~/types/auth-user-types"
@@ -136,11 +137,7 @@ export default function EditProfile({
               <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-indigo-500 bg-gray-800 flex items-center justify-center">
                 {currentAvatar ? (
                   <img
-                    src={
-                      currentAvatar.startsWith("data:")
-                        ? currentAvatar
-                        : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${currentAvatar}`
-                    }
+                    src={currentAvatar ? currentAvatar : LogoBonus}
                     alt="Profile Preview"
                     className="w-full h-full object-cover"
                   />

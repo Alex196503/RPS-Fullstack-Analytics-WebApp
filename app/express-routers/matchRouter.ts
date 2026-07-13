@@ -3,7 +3,7 @@ import express, {
   type Request,
   type Response
 } from "express"
-
+import os from "node:os";
 import multer from "multer"
 import {
   exportMatches,
@@ -17,7 +17,7 @@ import {
 import { authentificationMiddleware } from "~/middlewares/authMiddleware"
 import { MatchModel } from "~/schemas/MatchSchema"
 const upload = multer({
-  dest: "/app/csv-files",
+  dest: os.tmpdir(),
   limits: {
     fileSize: 10 * 1024 * 1024
   }

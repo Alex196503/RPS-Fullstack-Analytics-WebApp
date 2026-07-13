@@ -27,11 +27,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 //Adding a new cookie parser middleware
 app.use(cookieParser())
-//Middleware to ensure that static files like images are served with Express
-app.use(
-  "/uploads",
-  express.static(path.join(process.cwd(), "app/uploads"))
-)
 
 // Registering default routers to map domain-specific endpoints to their respective routers
 app.use("/profile", profileRouter)

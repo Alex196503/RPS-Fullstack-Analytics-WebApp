@@ -55,7 +55,7 @@ export const ProfileViewContainer = ({
           <img
             src={
               avatar
-                ? `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${avatar}`
+                ? avatar
                 : LogoBonus
             }
             alt="Profile Avatar"
