@@ -76,7 +76,7 @@ export const redirectIfAuthenticated = (request: Request) => {
 export const fetchUserData = async (request: Request) => {
   const cookieHeaders = request.headers.get("Cookie") || ""
   const backendUrl =
-    process.env.BACKEND_API_URL || "http://localhost:5000"
+    import.meta.env.BACKEND_API_URL || "http://localhost:5000"
   const res = await fetch(`${backendUrl}/profile`, {
     headers: {
       Cookie: cookieHeaders,
