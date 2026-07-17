@@ -44,9 +44,18 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   // Set the JWT token in an HTTP-only cookie on the frontend domain via response headers This ensures the token is available to subsequent server-side loaders during React Router's revalidation phase.
+  const isProduction = process.env.NODE_ENV === "production"
+  const cookieParts = [
+    `token=${result.data.token}`,
+    "Path=/",
+    "HttpOnly",
+    "Max-Age=3600",
+    isProduction ? "SameSite=None" : "SameSite=Lax",
+    isProduction ? "Secure" : ""
+  ].filter(Boolean)
   return redirect("/", {
     headers: {
-      "Set-Cookie": `token=${result.data.token}; Path=/; HttpOnly; Max-Age=3600; SameSite=Lax`
+      "Set-Cookie": cookieParts.join("; ")
     }
   })
 }
