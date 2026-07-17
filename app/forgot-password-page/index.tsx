@@ -9,7 +9,8 @@ export async function action({ request }: Route.ActionArgs) {
     let formData = await request.formData()
     let resetField = formData.get("text") as string
     const baseUrl =
-      import.meta.env.VITE_API_URL || "http://localhost:5000"
+      import.meta.env.VITE_API_URL ||
+      "https://rps-fullstack-analytics-webapp-1.onrender.com"
     const result = await fetchAuthenticationApi(
       `${baseUrl}/api/forgot-password`,
       { identity: resetField }

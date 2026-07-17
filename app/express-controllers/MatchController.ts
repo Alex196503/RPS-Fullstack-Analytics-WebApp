@@ -71,7 +71,8 @@ export const exportMatches = async (
   // Requests initiated via standard UI clicks will include the frontend domain in the 'Referer' header.
   const referer = req.headers.referer
   const frontEndUrl =
-    process.env.FRONTEND_URL || "http://localhost:3000"
+    process.env.FRONTEND_URL ||
+    "https://rps-frontend-n357.onrender.com"
   if (!referer || !referer.includes(frontEndUrl)) {
     return res.status(403).json({
       success: false,

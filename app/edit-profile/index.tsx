@@ -82,7 +82,8 @@ export default function EditProfile({
     }
     try {
       const baseUrl =
-        import.meta.env.VITE_API_URL || "http://localhost:5000"
+        import.meta.env.VITE_API_URL ||
+        "https://rps-fullstack-analytics-webapp-1.onrender.com"
       const req = await fetch(`${baseUrl}/profile/edit`, {
         method: "PUT",
         body: formData,

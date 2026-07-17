@@ -35,7 +35,11 @@ export async function action({ request }: Route.ActionArgs) {
     ) as Record<string, string>
     objectPayload.token = token
     const baseUrl =
-      import.meta.env.VITE_API_URL || "http://localhost:5000"
+      process?.env?.BACKEND_API_URL ||
+      process?.env?.VITE_API_URL ||
+      import.meta?.env?.VITE_API_URL ||
+      import.meta?.env?.BACKEND_API_URL ||
+      "https://rps-fullstack-analytics-webapp-1.onrender.com"
     let req = await fetchAuthenticationApi(
       `${baseUrl}/api/reset-password`,
       objectPayload

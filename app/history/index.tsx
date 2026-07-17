@@ -49,7 +49,7 @@ export default function History() {
   const validate = useRevalidator()
 
   const resetHistory = useCallback(async () => {
-    let link = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/match/reset`
+    let link = `${import.meta.env.VITE_API_URL || "https://rps-fullstack-analytics-webapp-1.onrender.com"}/match/reset`
     await deleteUserMatchHistory(link)
     if (typeof validate.revalidate === "function") {
       validate.revalidate()
@@ -100,7 +100,7 @@ export default function History() {
             </h1>
             {isUserVerified && (
               <a
-                href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/match/export`}
+                href={`${import.meta.env.VITE_API_URL || "https://rps-fullstack-analytics-webapp-1.onrender.com"}/match/export`}
                 className="text-white bg-green-500 box-border border border-transparent hover:bg-green-700 shadow-xs font-medium leading-5 rounded-xl text-xl px-4 py-2.5 focus:outline-none ease-in-out duration-300 cursor-pointer"
               >
                 Export CSV

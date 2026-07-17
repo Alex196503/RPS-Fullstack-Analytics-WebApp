@@ -38,7 +38,8 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const baseUrl =
-    import.meta.env.VITE_API_URL || "http://localhost:5000"
+    import.meta.env.VITE_API_URL ||
+    "https://rps-fullstack-analytics-webapp-1.onrender.com"
   //Calling the utility function to make the API call to the authentication server for registration.
   const result = await fetchAuthenticationApi(
     `${baseUrl}/api/register`,

@@ -26,7 +26,10 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ request }: Route.ActionArgs) {
   const baseUrl =
-    import.meta.env.VITE_API_URL || "http://localhost:5000"
+    process?.env?.BACKEND_API_URL ||
+    process?.env?.VITE_API_URL ||
+    import.meta.env.VITE_API_URL ||
+    "https://rps-fullstack-analytics-webapp-1.onrender.com"
   const cookieHeaders = request.headers.get("Cookie") || ""
   try {
     let [userData, statsResponse, requestToStatsCharts] =

@@ -66,7 +66,11 @@ export async function fetchHistoryPageData(request: Request) {
   const url = new URL(request.url)
   const errorParams = url.searchParams.get("error") || ""
   const backendUrl =
-    process.env.BACKEND_API_URL || "http://localhost:5000"
+    process?.env?.BACKEND_API_URL ||
+    process?.env?.VITE_API_URL ||
+    import.meta?.env?.BACKEND_API_URL ||
+    import.meta?.env?.VITE_API_URL ||
+    "https://rps-fullstack-analytics-webapp-1.onrender.com"
   const [user, existingMatches] = await Promise.all([
     fetchUserData(request),
     fetch(`${backendUrl}/match`, {
