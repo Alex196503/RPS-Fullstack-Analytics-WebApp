@@ -17,12 +17,30 @@ await mongoose
 import cors from "cors"
 import { scoreRouter } from "~/express-routers/scoreRouter"
 import { matchRouter } from "~/express-routers/matchRouter"
+
+// Allowed origins for CORS, permitting local development environments
+// and the live production frontend hosted on Render to securely
+// exchange credentials and API requests with the backend.
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://rps-frontend-n357.onrender.com"
+]
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true)
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error("Blocked by CORS policy"))
+      }
+    },
     credentials: true
   })
 )
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 //Adding a new cookie parser middleware

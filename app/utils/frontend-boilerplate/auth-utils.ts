@@ -75,8 +75,15 @@ export const redirectIfAuthenticated = (request: Request) => {
 //Utility helper to fetch authenticated user profile data from the Express backend. Automatically forwards session cookies from the client request for authentication validation
 export const fetchUserData = async (request: Request) => {
   const cookieHeaders = request.headers.get("Cookie") || ""
+  // Fallback chain for SSR (Node process) and client-side (Vite) environments.
+  // Prioritizes production environment variables before falling back to the
+  // live Render backend URL, avoiding local connection errors in production.
   const backendUrl =
-    import.meta.env.BACKEND_API_URL || "http://localhost:5000"
+    process?.env?.BACKEND_API_URL ||
+    process?.env?.VITE_API_URL ||
+    import.meta?.env?.BACKEND_API_URL ||
+    import.meta?.env?.VITE_API_URL ||
+    "https://rps-fullstack-analytics-webapp-1.onrender.com"
   const res = await fetch(`${backendUrl}/profile`, {
     headers: {
       Cookie: cookieHeaders,

@@ -54,10 +54,16 @@ export const handleDeleteProfile = async () => {
   if (userConfirmation) {
     try {
       const baseUrl =
-        import.meta.env.VITE_API_URL || "http://localhost:5000"
+        import.meta?.env?.VITE_API_URL ||
+        import.meta?.env?.BACKEND_API_URL ||
+        "https://rps-fullstack-analytics-webapp-1.onrender.com"
       const res = await fetch(`${baseUrl}/profile/delete`, {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`
+        }
       })
       const data = (await res.json()) as {
         success: boolean

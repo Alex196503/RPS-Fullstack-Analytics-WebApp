@@ -27,7 +27,8 @@ export const ProfileViewContainer = ({
     e.preventDefault()
     try {
       const baseUrl =
-        import.meta.env.VITE_API_URL || "http://localhost:5000"
+        import.meta.env.VITE_API_URL ||
+        "https://rps-fullstack-analytics-webapp-1.onrender.com"
       const res = await fetch(`${baseUrl}/api/resend-verification`, {
         method: "POST",
         headers: {
@@ -53,11 +54,7 @@ export const ProfileViewContainer = ({
       <section className="w-full max-w-xl mx-auto px-6 py-8 bg-gray-800 flex flex-col items-center gap-y-4 h-auto rounded-lg shadow-lg text-white">
         <div className="w-24 h-24 rounded-full border-4 border-blue-500 shadow-lg overflow-hidden flex items-center justify-center bg-gray-700">
           <img
-            src={
-              avatar
-                ? avatar
-                : LogoBonus
-            }
+            src={avatar ? avatar : LogoBonus}
             alt="Profile Avatar"
             className="w-full h-full object-cover"
           />

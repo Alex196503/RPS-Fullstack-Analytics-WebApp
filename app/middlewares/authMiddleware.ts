@@ -12,7 +12,13 @@ export const authentificationMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies.token as string | undefined
+  let token = req.cookies.token as string | undefined
+  if (!token && req.headers.authorization) {
+    const parts = req.headers.authorization.split(" ")
+    if (parts.length === 2 && parts[0] === "Bearer") {
+      token = parts[1]
+    }
+  }
   if (!token) {
     return res
       .status(401)

@@ -24,7 +24,11 @@ export async function action({ request }: Route.ActionArgs) {
   }
   const payload = { email, password }
   const baseUrl =
-    import.meta.env.VITE_API_URL || "http://localhost:5000"
+    process.env.BACKEND_API_URL ||
+    process.env.VITE_API_URL ||
+    import.meta.env.VITE_API_URL ||
+    import.meta.env.BACKEND_API_URL ||
+    "https://rps-fullstack-analytics-webapp-1.onrender.com"
   const result = await fetchAuthenticationApi(
     `${baseUrl}/api/login`,
     payload

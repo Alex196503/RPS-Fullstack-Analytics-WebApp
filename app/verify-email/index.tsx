@@ -10,7 +10,11 @@ export async function loader({ request }: { request: Request }) {
 
     //We use `process.env.BACKEND_API_URL` instead of Vite's `import.meta.env` because this specific block executes exclusively on the server-side (SSR).
     const backendUrl =
-      process.env.BACKEND_API_URL || "http://localhost:5000"
+      process?.env?.BACKEND_API_URL ||
+      process?.env?.VITE_API_URL ||
+      import.meta?.env?.BACKEND_API_URL ||
+      import.meta?.env?.VITE_API_URL ||
+      "https://rps-fullstack-analytics-webapp-1.onrender.com"
     let req = await fetch(
       `${backendUrl}/api/verify-email?token=${token}`,
       {
