@@ -1,7 +1,9 @@
 ### A fullstack web app that turns the classic Rock-Paper-Scissors game into a data-driven experience. It features user authentication, real-time match tracking, and a performance dashboard to analyze your gameplay stats.
 
 # Key features:
-* **User Authentication**: Secure login and registration with JWT-based sessions.
+* **User Authentication**: Secure login and registration with JWT-based sessions and a robust password reset flow (verified via email).
+* **Email integration**: Automated emails for account verification and password resets, powered by Nodemailer.
+* **Performance Analytics**: A dedicated dashboard featuring Chart.js visualizations to track match history and performance trends.
 * **Core Game Logic**: Play the classic Rock-Paper-Scissors game with real-time score tracking alongside the advanced mode with lizard and spock.
 * **Performance Analytics**: A dashboard to track your match history and overall win/loss ratios.
 * **Data Management**: Import and export your match history using CSV files.
@@ -12,10 +14,10 @@
 
 # Technologies:
 
-* **Frontend**: React (with React Router v7), TypeScript, Vite, and TailwindCSS.
+* **Frontend**: React (with React Router v7), TypeScript, Chart.js, Vite, and TailwindCSS.
 * **Backend**: Node.js, Express, and TypeScript.
 * **Database**: MongoDB with Mongoose.
-* **Services**: Cloudinary (for image hosting).
+* **Services**: Cloudinary (for image hosting), Nodemailer with SMTP (email/reset password system).
 * **Tooling**: Docker & Docker Compose for environment setup and testing suites.
 * **Testing**: Vitest, React Testing Library (RTL), jest-dom, and Supertest for API testing.
 
