@@ -26,7 +26,7 @@
 1. Clone this repository: `git clone https://github.com/Alex196503/RPS-Fullstack-Analytics-WebApp.git`.
 2. Configure environment variables. Create a .env file in the project root (or specific /frontend and /backend folders) and set the required keys:
     - JWT_SECRET=your_super_secret_key
-    - MONGODB_URI=mongodb://localhost:27017/rps_analytics
+    - MONGODB_URI=your_mongodb_connection_string
     - VITE_API_URL=http://localhost:5000`
 3. Run with Docker Compose: ``docker-compose up --build``
 4. Access the app:
